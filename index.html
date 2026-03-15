@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasuki — The multi-agent framework for Claude Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Mono base */
+  --bg:       #080808;
+  --bg2:      #0F0F0F;
+  --bg3:      #161616;
+  --surface:  #1C1C1C;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --text:     #F0EDE6;
+  --text2:    #9A9890;
+  --text3:    #4A4A48;
+
+  /* Agent colors */
+  --planner:  #D8D4CC;
+  --qa:       #F5E642;
+  --dbarch:   #4A9EFF;
+  --backend:  #00D4FF;
+  --frontend: #FF7B6B;
+  --debugger: #FF8C2B;
+  --security: #FF4444;
+  --reviewer: #4ADE80;
+  --devops:   #A0A8B0;
+
+  --green:    #4ADE80;
+  --radius:   10px;
+  --radius-lg:16px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 40px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,8,8,0.88);
+  backdrop-filter: blur(14px);
+}
+
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-wordmark { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; letter-spacing: -0.04em; color: var(--text); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { font-size: 13px; color: var(--text2); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta { display: flex; align-items: center; gap: 10px; }
+
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; font-family: inherit; }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
+.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.22); }
+.btn-white { background: var(--text); color: #080808; font-weight: 500; }
+.btn-white:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,255,255,0.15); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 120px 40px 80px;
+  position: relative; overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 75%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 14px; border-radius: 100px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border2);
+  font-size: 12px; color: var(--text2); margin-bottom: 28px;
+  font-family: 'DM Mono', monospace; position: relative; z-index: 2;
+  animation: fade-up 0.5s ease both 0.1s;
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(42px, 7vw, 78px); letter-spacing: -0.04em; line-height: 1.0;
+  max-width: 820px; position: relative; z-index: 2; margin-bottom: 24px;
+  animation: fade-up 0.5s ease both 0.2s;
+}
+
+.hero-sub {
+  font-size: clamp(16px, 2vw, 19px); color: var(--text2); max-width: 520px;
+  line-height: 1.65; position: relative; z-index: 2; margin-bottom: 40px;
+  font-weight: 300; animation: fade-up 0.5s ease both 0.3s;
+}
+
+.hero-actions {
+  display: flex; gap: 12px; align-items: center;
+  position: relative; z-index: 2; margin-bottom: 56px;
+  flex-wrap: wrap; justify-content: center;
+  animation: fade-up 0.5s ease both 0.4s;
+}
+
+.btn-hero { padding: 13px 28px; font-size: 15px; }
+
+.hero-install {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 12px 20px; background: var(--surface);
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text);
+  cursor: pointer; transition: border-color 0.2s;
+  position: relative; z-index: 2;
+  animation: fade-up 0.5s ease both 0.4s;
+}
+.hero-install:hover { border-color: rgba(255,255,255,0.28); }
+
+.hero-proof {
+  display: flex; align-items: center; gap: 24px; font-size: 12px; color: var(--text3);
+  position: relative; z-index: 2; flex-wrap: wrap; justify-content: center;
+  animation: fade-up 0.5s ease both 0.5s;
+}
+.hero-proof span { display: flex; align-items: center; gap: 6px; }
+
+/* ── TERMINAL ── */
+.terminal-wrap {
+  width: 100%; max-width: 680px; margin: 0 auto 80px;
+  position: relative; z-index: 2;
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border2);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+  animation: fade-up 0.6s ease both 0.55s;
+}
+.terminal-bar { background: #141414; padding: 11px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+.terminal-dots { display: flex; gap: 6px; }
+.terminal-dots span { width: 11px; height: 11px; border-radius: 50%; }
+.td-r { background: #FF5F57; } .td-y { background: #FEBC2E; } .td-g { background: #28C840; }
+.terminal-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); flex: 1; text-align: center; }
+.terminal-body { background: #0A0A0A; padding: 24px 28px; font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.9; }
+.t-p { color: var(--text2); } .t-cmd { color: var(--text); } .t-dim { color: var(--text3); }
+.t-ok { color: var(--green); } .t-line { display: block; } .t-ind { padding-left: 20px; }
+.t-planner  { color: var(--planner); }
+.t-qa       { color: var(--qa); }
+.t-backend  { color: var(--backend); }
+.t-frontend { color: var(--frontend); }
+.t-security { color: var(--security); }
+.t-reviewer { color: var(--reviewer); }
+
+/* ── SECTION ── */
+section, .sect { padding: 100px 40px; max-width: 1160px; margin: 0 auto; }
+.eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 16px; }
+.section-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 44px); letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
+.section-sub { font-size: 17px; color: var(--text2); max-width: 520px; line-height: 1.65; font-weight: 300; }
+hr.div { border: none; border-top: 1px solid var(--border); max-width: 1160px; margin: 0 auto; }
+
+/* ── AGENTS GRID ── */
+.agents-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 56px; }
+
+.agent-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  display: flex; flex-direction: column;
+}
+.agent-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+/* Top color bar — agent color */
+.agent-bar { height: 3px; width: 100%; }
+
+.agent-body { padding: 22px 22px 20px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+.agent-header { display: flex; align-items: center; gap: 10px; }
+
+/* Character illustration placeholder — will be replaced with actual SVG characters */
+.agent-avatar {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+
+.agent-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: -0.01em; }
+.agent-stage { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); margin-left: auto; }
+.agent-role { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.agent-model {
+  margin-top: auto; padding-top: 12px;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3);
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px;
+  width: fit-content;
+}
+.model-thinking { color: var(--text2); }
+
+/* ── PIPELINE ── */
+.pipeline-visual { margin-top: 56px; display: flex; flex-direction: column; }
+.pipeline-stage { display: grid; grid-template-columns: 72px 1fr; gap: 0 20px; }
+.pipeline-spine { display: flex; flex-direction: column; align-items: center; }
+.pipeline-num {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--border2); background: var(--bg2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3);
+  flex-shrink: 0; z-index: 2; transition: all 0.2s;
+}
+.pipeline-stage:hover .pipeline-num { border-color: rgba(255,255,255,0.3); color: var(--text); }
+.pipeline-line { width: 1px; flex: 1; background: var(--border); min-height: 20px; }
+.pipeline-content { padding: 0 0 28px; }
+.pipeline-header { display: flex; align-items: center; gap: 10px; min-height: 34px; margin-bottom: 6px; }
+.pipeline-label { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+.pipeline-tag { font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 4px; }
+.tag-tdd { background: rgba(245,230,66,0.1); color: var(--qa); border: 1px solid rgba(245,230,66,0.2); }
+.tag-always { background: rgba(74,222,128,0.08); color: var(--reviewer); border: 1px solid rgba(74,222,128,0.2); }
+.tag-confirm { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid var(--border2); }
+.pipeline-desc { font-size: 14px; color: var(--text2); line-height: 1.6; max-width: 580px; }
+.pipeline-checkpoint {
+  display: flex; align-items: center; gap: 10px;
+  margin: 6px 0 20px 92px;
+  font-size: 11px; color: var(--reviewer); font-family: 'DM Mono', monospace;
+}
+.checkpoint-line { flex: 1; max-width: 180px; height: 1px; background: rgba(74,222,128,0.2); }
+
+/* ── COMPARISON ── */
+.comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 56px; }
+.comp-card { border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; }
+.comp-card.feat { border-color: rgba(255,255,255,0.18); box-shadow: 0 0 40px rgba(255,255,255,0.03); }
+.comp-head { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.comp-head.feat-head { background: rgba(255,255,255,0.04); }
+.comp-tool { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+.comp-badge { font-size: 10px; font-family: 'DM Mono', monospace; padding: 2px 8px; border-radius: 4px; margin-left: auto; }
+.badge-full  { background: rgba(255,255,255,0.07); color: var(--text); border: 1px solid var(--border2); }
+.badge-compat{ background: transparent; color: var(--text3); border: 1px solid var(--border); }
+.comp-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 22px; font-size: 13px; border-bottom: 1px solid var(--border); gap: 16px; }
+.comp-row:last-child { border-bottom: none; }
+.comp-feat { color: var(--text2); flex: 1; }
+.comp-val { font-family: 'DM Mono', monospace; font-size: 11px; text-align: right; }
+.val-yes { color: var(--reviewer); } .val-no { color: var(--text3); } .val-mid { color: var(--text2); }
+
+/* ── PRICING ── */
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 56px; }
+.price-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 30px 26px; display: flex; flex-direction: column; }
+.price-card.feat-price { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.02); position: relative; }
+.price-card.feat-price::before { content: 'Most tasks'; position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--text); color: #080808; font-size: 10px; font-weight: 500; font-family: 'DM Mono', monospace; padding: 3px 12px; border-radius: 100px; white-space: nowrap; }
+.price-mode { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; margin-bottom: 6px; }
+.price-desc { font-size: 13px; color: var(--text2); margin-bottom: 22px; line-height: 1.5; }
+.price-amount { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 34px; letter-spacing: -0.04em; line-height: 1; margin-bottom: 4px; }
+.price-range { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 22px; }
+.price-divider { height: 1px; background: var(--border); margin-bottom: 18px; }
+.price-features { list-style: none; display: flex; flex-direction: column; gap: 9px; flex: 1; }
+.price-features li { display: flex; gap: 10px; font-size: 13px; color: var(--text2); line-height: 1.4; }
+.price-features li::before { content: '—'; color: var(--text3); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.price-cli { margin-top: 18px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); padding: 9px 12px; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px solid var(--border); }
+.price-note { margin-top: 36px; text-align: center; font-size: 14px; color: var(--text3); line-height: 1.6; }
+.price-note strong { color: var(--text2); font-weight: 500; }
+
+/* ── FAQ ── */
+.faq-wrap { padding: 100px 40px; max-width: 760px; margin: 0 auto; }
+.faq-list { margin-top: 56px; border-top: 1px solid var(--border); }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-q { width: 100%; background: none; border: none; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; text-align: left; padding: 20px 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; transition: color 0.2s; }
+.faq-q:hover { color: rgba(255,255,255,0.7); }
+.faq-icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--text3); transition: transform 0.3s; }
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; font-size: 14px; color: var(--text2); line-height: 1.7; }
+.faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+
+/* ── CTA ── */
+.cta-section { padding: 100px 40px 120px; text-align: center; position: relative; overflow: hidden; }
+.cta-section::before { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 500px; height: 280px; background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%); pointer-events: none; }
+.cta-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(30px, 5vw, 50px); letter-spacing: -0.04em; line-height: 1.05; max-width: 640px; margin: 0 auto 20px; }
+.cta-sub { font-size: 17px; color: var(--text2); margin-bottom: 36px; font-weight: 300; }
+.cta-install { display: inline-flex; align-items: center; gap: 12px; padding: 15px 26px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
+.cta-install:hover { border-color: rgba(255,255,255,0.25); box-shadow: 0 0 30px rgba(255,255,255,0.05); }
+.cta-hint { font-size: 12px; color: var(--text3); }
+
+/* ── FOOTER ── */
+footer { border-top: 1px solid var(--border); padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; max-width: 1160px; margin: 0 auto; }
+.footer-left { font-size: 13px; color: var(--text3); display: flex; align-items: center; gap: 10px; }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; color: var(--text3); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text2); }
+
+/* ── ANIMATIONS ── */
+@keyframes fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+@keyframes float      { 0%,100%{ transform: translateY(0); }    50%{ transform: translateY(-7px); } }
+@keyframes tilt       { 0%,100%{ transform: rotate(0deg); }     50%{ transform: rotate(-6deg); } }
+@keyframes bob        { 0%,100%{ transform: translateY(0); }    50%{ transform: translateY(-4px); } }
+@keyframes lean       { 0%,100%{ transform: rotate(0deg); }     50%{ transform: rotate(4deg); } }
+@keyframes bounce     { 0%,100%{ transform: translateY(0); } 40%{ transform: translateY(-12px); } 60%{ transform: translateY(-8px); } }
+@keyframes jitter     { 0%,100%{ transform: translateX(0) rotate(0deg); } 25%{ transform: translateX(4px) rotate(3deg); } 75%{ transform: translateX(-4px) rotate(-3deg); } }
+@keyframes stoic      { 0%,100%{ transform: translateY(0); }    50%{ transform: translateY(-2px); } }
+@keyframes readsway   { 0%,100%{ transform: rotate(0deg); }     50%{ transform: rotate(-4deg) translateX(-2px); } }
+.anim-float    { animation: float    3.5s ease-in-out infinite; transform-origin: bottom center; }
+.anim-tilt     { animation: tilt     2.8s ease-in-out infinite; transform-origin: bottom center; }
+.anim-bob      { animation: bob      2.2s ease-in-out infinite; transform-origin: bottom center; }
+.anim-lean     { animation: lean     3.0s ease-in-out infinite; transform-origin: bottom center; }
+.anim-bounce   { animation: bounce   1.6s ease-in-out infinite; transform-origin: bottom center; }
+.anim-jitter   { animation: jitter   0.45s ease-in-out infinite; transform-origin: bottom center; }
+.anim-stoic    { animation: stoic    6.0s ease-in-out infinite; transform-origin: bottom center; }
+.anim-readsway { animation: readsway 3.2s ease-in-out infinite; transform-origin: bottom center; }
+.agent-character { display:flex; align-items:center; justify-content:center; height:110px; cursor:pointer; }
+.agent-card-new { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; transition:border-color 0.2s,transform 0.2s; display:flex; flex-direction:column; }
+.agent-card-new:hover { border-color:var(--border2); transform:translateY(-3px); }
+.agent-card-new .agent-bar { height:3px; width:100%; }
+.agent-card-new .agent-body { padding:16px 20px 18px; flex:1; display:flex; flex-direction:column; gap:8px; }
+.agent-card-new .agent-header { display:flex; align-items:center; justify-content:space-between; }
+.agent-card-new .agent-name { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; letter-spacing:-0.01em; }
+.agent-card-new .agent-stage { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3); }
+.agent-card-new .agent-role { font-size:13px; color:var(--text2); line-height:1.5; }
+.agent-card-new .agent-model { margin-top:auto; padding-top:10px; display:inline-flex; align-items:center; gap:5px; font-family:'DM Mono',monospace; font-size:10px; color:var(--text3); background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:3px 8px; border-radius:4px; width:fit-content; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  section, .sect, .faq-wrap { padding: 64px 20px; }
+  .agents-grid { grid-template-columns: 1fr 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .comparison-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 16px; text-align: center; }
+  .hero { padding: 100px 20px 60px; }
+}
+@media (max-width: 520px) { .agents-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg width="26" height="26" viewBox="0 0 92 84" fill="none">
+      <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" opacity="0.55"/>
+      <line x1="18" y1="12" x2="14" y2="44"  stroke="#D8D4CC" stroke-width="1.2" opacity="0.25"/>
+      <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="52" y1="8"  x2="62" y2="48"  stroke="#F5E642"  stroke-width="1.2" opacity="0.42"/>
+      <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="14" y2="44"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.22"/>
+      <line x1="38" y1="58" x2="14" y2="44"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.32"/>
+      <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.46"/>
+      <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444"  stroke-width="1.2" opacity="0.56"/>
+      <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="62" y1="48" x2="76" y2="60"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.2"/>
+      <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>
+      <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>
+      <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>
+      <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>
+      <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>
+      <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>
+      <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>
+      <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>
+      <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>
+    </svg>
+    <span class="nav-wordmark">tasuki</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#team">The team</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="https://github.com/ForeroAlexander/Tasuki" class="btn btn-ghost" target="_blank">GitHub</a>
+    <a href="#install" class="btn btn-white">Install free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+
+  <div class="hero-badge">
+    <span style="width:6px;height:6px;border-radius:50%;background:var(--reviewer);animation:pulse 2s infinite;"></span>
+    npm install -g tasuki
+  </div>
+
+  <h1 class="hero-title">
+    Your AI coding assistant,<br>promoted to team lead.
+  </h1>
+
+  <p class="hero-sub">
+    One command transforms Claude Code into a team of 9 specialized engineers — automatic TDD, security audits, and a knowledge graph that gets smarter with every task.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#install" class="btn btn-white btn-hero">Get started — it's free</a>
+    <a href="#how" class="btn btn-ghost btn-hero">See how it works</a>
+  </div>
+
+  <div class="hero-install" onclick="copyCmd(this)">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
+    npm install -g tasuki
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+  </div>
+
+  <div class="hero-proof" style="margin-top:16px;">
+    <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>$0 to onboard</span>
+    <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>8 AI tools</span>
+    <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>MIT License</span>
+    <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>Runs locally</span>
+  </div>
+
+  <!-- Terminal -->
+  <div class="terminal-wrap" style="margin-top:48px;">
+    <div class="terminal-bar">
+      <div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div>
+      <div class="terminal-title">Claude Code — your-project</div>
+    </div>
+    <div class="terminal-body">
+      <span class="t-line"><span class="t-p">$</span> <span class="t-cmd">tasuki onboard .</span></span>
+      <span class="t-line t-dim">  ✓ FastAPI + PostgreSQL + React detected</span>
+      <span class="t-line t-dim">  ✓ 9 agents configured · 3 hooks installed</span>
+      <span class="t-line t-ok">  Ready. Talk to Claude Code normally.</span>
+      <span class="t-line">&nbsp;</span>
+      <span class="t-line"><span class="t-p">You:</span> <span class="t-cmd">Add user authentication with JWT</span></span>
+      <span class="t-line">&nbsp;</span>
+      <span class="t-line t-ind"><span class="t-planner">[Planner]</span>    <span class="t-dim">→ PRD designed · "Continue?" ✓</span></span>
+      <span class="t-line t-ind"><span class="t-qa">[QA]</span>         <span class="t-dim">→ 14 failing tests written (TDD)</span></span>
+      <span class="t-line t-ind"><span style="color:var(--dbarch)">[DB Arch]</span>    <span class="t-dim">→ Migration: users, sessions, tokens</span></span>
+      <span class="t-line t-ind"><span class="t-backend">[Backend]</span>    <span class="t-dim">→ JWT auth — 14/14 pass ✓</span></span>
+      <span class="t-line t-ind"><span class="t-frontend">[Frontend]</span>   <span class="t-dim">→ Login/signup UI · all states</span></span>
+      <span class="t-line t-ind"><span class="t-security">[Security]</span>   <span class="t-dim">→ OWASP audit — PASS ✓</span></span>
+      <span class="t-line t-ind"><span class="t-reviewer">[Reviewer]</span>   <span class="t-dim">→ Code review — APPROVE ✓</span></span>
+      <span class="t-line">&nbsp;</span>
+      <span class="t-line t-ok">  ✓ Feature complete · $1.24 in API credits</span>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- TEAM -->
+<div class="sect" id="team">
+  <div class="eyebrow">The team you don't have to hire</div>
+  <h2 class="section-title">9 engineers.<br>One command.</h2>
+  <p class="section-sub">Each agent is a 250+ line production-hardened specialist. Hard boundaries, domain checklists, structured handoffs.</p>
+
+  <div class="agents-grid">
+
+    <!-- PLANNER — floats gently, thinking -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--planner)"></div>
+      <div class="agent-character">
+        <svg class="anim-float" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="20" ry="3.5" fill="#D8D4CC" opacity="0.1"/>
+          <rect x="18" y="40" width="44" height="34" rx="10" fill="#B8B4AC"/>
+          <rect x="14" y="8" width="52" height="46" rx="22" fill="#D8D4CC"/>
+          <rect x="22" y="24" width="9" height="11" rx="4.5" fill="#1A1A1A"/>
+          <rect x="49" y="24" width="9" height="11" rx="4.5" fill="#1A1A1A"/>
+          <rect x="25" y="22" width="4" height="5" rx="2" fill="white"/>
+          <rect x="52" y="22" width="4" height="5" rx="2" fill="white"/>
+          <rect x="21" y="20" width="11" height="3" rx="1.5" fill="#9A9890"/>
+          <rect x="48" y="18" width="11" height="3" rx="1.5" fill="#9A9890" transform="rotate(-7 53 19)"/>
+          <path d="M32 38 Q40 43 48 38" stroke="#9A9890" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <ellipse cx="21" cy="36" rx="5" ry="3" fill="#C8C4BC" opacity="0.5"/>
+          <ellipse cx="59" cy="36" rx="5" ry="3" fill="#C8C4BC" opacity="0.5"/>
+          <rect x="4" y="44" width="16" height="10" rx="5" fill="#B8B4AC"/>
+          <rect x="60" y="42" width="16" height="10" rx="5" fill="#B8B4AC"/>
+          <rect x="62" y="28" width="15" height="20" rx="3" fill="#222" stroke="#D8D4CC" stroke-width="0.8" opacity="0.9"/>
+          <rect x="67" y="25" width="7" height="5" rx="2" fill="#D8D4CC" opacity="0.7"/>
+          <rect x="64" y="33" width="11" height="1.5" rx="1" fill="#D8D4CC" opacity="0.4"/>
+          <rect x="64" y="37" width="8" height="1.5" rx="1" fill="#D8D4CC" opacity="0.3"/>
+          <rect x="64" y="41" width="9" height="1.5" rx="1" fill="#D8D4CC" opacity="0.3"/>
+          <rect x="24" y="70" width="12" height="22" rx="6" fill="#9A9890"/>
+          <rect x="44" y="70" width="12" height="22" rx="6" fill="#9A9890"/>
+          <rect x="20" y="86" width="16" height="8" rx="4" fill="#7A7870"/>
+          <rect x="44" y="86" width="16" height="8" rx="4" fill="#7A7870"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--planner)">Planner</div><div class="agent-stage">Stage 1</div></div>
+        <div class="agent-role">Designs architecture, writes PRDs, decomposes work into per-agent tasks. Waits for your confirmation before any code is written.</div>
+        <div class="agent-model"><span class="model-thinking">thinking</span> · opus</div>
+      </div>
+    </div>
+
+    <!-- QA — tilts side to side, inspecting -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--qa)"></div>
+      <div class="agent-character">
+        <svg class="anim-tilt" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="20" ry="3.5" fill="#F5E642" opacity="0.1"/>
+          <rect x="18" y="40" width="44" height="34" rx="10" fill="#C8BC00"/>
+          <rect x="14" y="8" width="52" height="46" rx="22" fill="#F5E642"/>
+          <rect x="20" y="23" width="15" height="12" rx="6" fill="none" stroke="#C8BC00" stroke-width="2"/>
+          <rect x="45" y="23" width="15" height="12" rx="6" fill="none" stroke="#C8BC00" stroke-width="2"/>
+          <line x1="35" y1="29" x2="45" y2="29" stroke="#C8BC00" stroke-width="2"/>
+          <rect x="24" y="25" width="6" height="7" rx="3" fill="#1A1A1A"/>
+          <rect x="49" y="25" width="6" height="7" rx="3" fill="#1A1A1A"/>
+          <rect x="25" y="26" width="3" height="3" rx="1.5" fill="white"/>
+          <rect x="50" y="26" width="3" height="3" rx="1.5" fill="white"/>
+          <rect x="21" y="19" width="11" height="3" rx="1.5" fill="#C8BC00"/>
+          <rect x="48" y="17" width="11" height="3" rx="1.5" fill="#C8BC00" transform="rotate(-10 53 18)"/>
+          <path d="M33 38 Q42 41 49 37" stroke="#C8BC00" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <ellipse cx="21" cy="36" rx="5" ry="3" fill="#E8DC00" opacity="0.4"/>
+          <ellipse cx="59" cy="36" rx="5" ry="3" fill="#E8DC00" opacity="0.4"/>
+          <rect x="4" y="44" width="16" height="10" rx="5" fill="#C8BC00"/>
+          <rect x="60" y="42" width="16" height="10" rx="5" fill="#C8BC00"/>
+          <rect x="2" y="30" width="15" height="20" rx="3" fill="#222" stroke="#F5E642" stroke-width="0.8" opacity="0.9"/>
+          <path d="M6 37 L8 40 L13 34" stroke="#4ADE80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M6 43 L8 46 L13 40" stroke="#4ADE80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <rect x="24" y="70" width="12" height="22" rx="6" fill="#C8BC00"/>
+          <rect x="44" y="70" width="12" height="22" rx="6" fill="#C8BC00"/>
+          <rect x="20" y="86" width="16" height="8" rx="4" fill="#A89C00"/>
+          <rect x="44" y="86" width="16" height="8" rx="4" fill="#A89C00"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--qa)">QA</div><div class="agent-stage">Stage 2</div></div>
+        <div class="agent-role">Writes failing tests before any code exists. The test IS the specification. The tdd-guard hook mechanically blocks implementation without tests.</div>
+        <div class="agent-model">execution · sonnet</div>
+      </div>
+    </div>
+
+    <!-- DB ARCH — bobs up and down, building -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--dbarch)"></div>
+      <div class="agent-character">
+        <svg class="anim-bob" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="20" ry="3.5" fill="#4A9EFF" opacity="0.1"/>
+          <rect x="18" y="40" width="44" height="34" rx="10" fill="#1A6FCC"/>
+          <ellipse cx="40" cy="48" rx="10" ry="4" fill="#4A9EFF" opacity="0.5"/>
+          <rect x="30" y="48" width="20" height="8" fill="#4A9EFF" opacity="0.3"/>
+          <ellipse cx="40" cy="56" rx="10" ry="4" fill="#4A9EFF" opacity="0.4"/>
+          <rect x="14" y="8" width="52" height="46" rx="22" fill="#4A9EFF"/>
+          <rect x="12" y="14" width="56" height="12" rx="6" fill="#1A6FCC"/>
+          <rect x="8" y="18" width="64" height="8" rx="4" fill="#2A7FDD"/>
+          <rect x="22" y="26" width="10" height="11" rx="5" fill="#1A1A1A"/>
+          <rect x="48" y="26" width="10" height="11" rx="5" fill="#1A1A1A"/>
+          <rect x="25" y="27" width="4" height="5" rx="2" fill="white"/>
+          <rect x="51" y="27" width="4" height="5" rx="2" fill="white"/>
+          <rect x="21" y="22" width="12" height="3" rx="1.5" fill="#1A6FCC"/>
+          <rect x="47" y="22" width="12" height="3" rx="1.5" fill="#1A6FCC"/>
+          <path d="M31 39 Q40 44 49 39" stroke="#1A6FCC" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <ellipse cx="21" cy="37" rx="5" ry="3" fill="#6AB4FF" opacity="0.4"/>
+          <ellipse cx="59" cy="37" rx="5" ry="3" fill="#6AB4FF" opacity="0.4"/>
+          <rect x="4" y="44" width="16" height="10" rx="5" fill="#1A6FCC"/>
+          <rect x="60" y="44" width="16" height="10" rx="5" fill="#1A6FCC"/>
+          <rect x="63" y="28" width="4" height="22" rx="2" fill="#8B7355"/>
+          <rect x="58" y="42" width="14" height="10" rx="3" fill="#4A9EFF" opacity="0.8"/>
+          <rect x="24" y="70" width="12" height="22" rx="6" fill="#1A6FCC"/>
+          <rect x="44" y="70" width="12" height="22" rx="6" fill="#1A6FCC"/>
+          <rect x="20" y="86" width="16" height="8" rx="4" fill="#0A4F9A"/>
+          <rect x="44" y="86" width="16" height="8" rx="4" fill="#0A4F9A"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--dbarch)">DB Architect</div><div class="agent-stage">Stage 3</div></div>
+        <div class="agent-role">Zero-downtime migrations in your exact format. Verifies the plan matches QA's tests before touching the schema.</div>
+        <div class="agent-model">execution · sonnet</div>
+      </div>
+    </div>
+
+    <!-- BACKEND — leans forward typing -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--backend)"></div>
+      <div class="agent-character">
+        <svg class="anim-lean" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="20" ry="3.5" fill="#00D4FF" opacity="0.1"/>
+          <rect x="16" y="40" width="48" height="34" rx="12" fill="#008BAA"/>
+          <rect x="26" y="56" width="28" height="14" rx="4" fill="#007A99" opacity="0.7"/>
+          <rect x="10" y="48" width="28" height="18" rx="3" fill="#1A1A1A" stroke="#00D4FF" stroke-width="0.8"/>
+          <rect x="11" y="49" width="26" height="14" rx="2" fill="#0A2A30"/>
+          <rect x="13" y="51" width="14" height="1.5" rx="1" fill="#00D4FF" opacity="0.7"/>
+          <rect x="13" y="54" width="10" height="1.5" rx="1" fill="#4ADE80" opacity="0.6"/>
+          <rect x="13" y="57" width="18" height="1.5" rx="1" fill="#00D4FF" opacity="0.5"/>
+          <rect x="13" y="60" width="8" height="1.5" rx="1" fill="#F5E642" opacity="0.5"/>
+          <rect x="8" y="66" width="32" height="3" rx="1.5" fill="#2A2A2A"/>
+          <rect x="14" y="8" width="52" height="46" rx="22" fill="#00D4FF"/>
+          <rect x="22" y="24" width="10" height="11" rx="5" fill="#1A1A1A"/>
+          <rect x="48" y="24" width="10" height="11" rx="5" fill="#1A1A1A"/>
+          <rect x="25" y="25" width="4" height="5" rx="2" fill="white"/>
+          <rect x="51" y="25" width="4" height="5" rx="2" fill="white"/>
+          <rect x="21" y="20" width="12" height="3" rx="1.5" fill="#008BAA"/>
+          <rect x="47" y="20" width="12" height="3" rx="1.5" fill="#008BAA"/>
+          <path d="M33 38 Q40 42 47 38" stroke="#008BAA" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <ellipse cx="21" cy="36" rx="5" ry="3" fill="#00C8EE" opacity="0.4"/>
+          <ellipse cx="59" cy="36" rx="5" ry="3" fill="#00C8EE" opacity="0.4"/>
+          <rect x="4" y="52" width="14" height="10" rx="5" fill="#008BAA"/>
+          <rect x="62" y="44" width="14" height="10" rx="5" fill="#008BAA"/>
+          <rect x="24" y="70" width="12" height="22" rx="6" fill="#008BAA"/>
+          <rect x="44" y="70" width="12" height="22" rx="6" fill="#008BAA"/>
+          <rect x="20" y="86" width="16" height="8" rx="4" fill="#006688"/>
+          <rect x="44" y="86" width="16" height="8" rx="4" fill="#006688"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--backend)">Backend Dev</div><div class="agent-stage">Stage 4</div></div>
+        <div class="agent-role">Runs failing tests first, then implements until all pass. APIs, services, background jobs. Structured handoff to Frontend.</div>
+        <div class="agent-model">execution · sonnet</div>
+      </div>
+    </div>
+
+    <!-- FRONTEND — bounces happily -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--frontend)"></div>
+      <div class="agent-character">
+        <svg class="anim-bounce" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="20" ry="3.5" fill="#FF7B6B" opacity="0.1"/>
+          <rect x="18" y="40" width="44" height="34" rx="10" fill="#CC4A3A"/>
+          <ellipse cx="32" cy="57" rx="10" ry="7" fill="#AA3028" opacity="0.7"/>
+          <circle cx="28" cy="55" r="2.5" fill="#F5E642"/>
+          <circle cx="34" cy="52" r="2.5" fill="#4ADE80"/>
+          <circle cx="38" cy="57" r="2.5" fill="#4A9EFF"/>
+          <rect x="14" y="8" width="52" height="46" rx="22" fill="#FF7B6B"/>
+          <ellipse cx="40" cy="11" rx="22" ry="8" fill="#CC4A3A"/>
+          <ellipse cx="52" cy="9" rx="8" ry="5" fill="#CC4A3A"/>
+          <circle cx="56" cy="7" r="3" fill="#FF9B8B"/>
+          <path d="M22 27 Q27 23 32 27" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M48 27 Q53 23 58 27" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <rect x="21" y="19" width="12" height="3" rx="1.5" fill="#CC4A3A" transform="rotate(-5 27 20)"/>
+          <rect x="47" y="19" width="12" height="3" rx="1.5" fill="#CC4A3A" transform="rotate(5 53 20)"/>
+          <path d="M28 37 Q40 46 52 37" stroke="#CC4A3A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <ellipse cx="21" cy="34" rx="5" ry="3" fill="#FF9B8B" opacity="0.6"/>
+          <ellipse cx="59" cy="34" rx="5" ry="3" fill="#FF9B8B" opacity="0.6"/>
+          <rect x="4" y="44" width="16" height="10" rx="5" fill="#CC4A3A"/>
+          <rect x="58" y="30" width="4" height="24" rx="2" fill="#8B7355" transform="rotate(20 60 42)"/>
+          <ellipse cx="63" cy="29" rx="4" ry="5" fill="#FF7B6B" transform="rotate(20 63 32)"/>
+          <rect x="60" y="44" width="16" height="10" rx="5" fill="#CC4A3A"/>
+          <rect x="24" y="70" width="12" height="22" rx="6" fill="#CC4A3A"/>
+          <rect x="44" y="70" width="12" height="22" rx="6" fill="#CC4A3A"/>
+          <rect x="20" y="86" width="16" height="8" rx="4" fill="#AA2A1A"/>
+          <rect x="44" y="86" width="16" height="8" rx="4" fill="#AA2A1A"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--frontend)">Frontend Dev</div><div class="agent-stage">Stage 5</div></div>
+        <div class="agent-role">Shows a design preview for your approval before building. Accessible, responsive UI with all states covered. Figma or generated.</div>
+        <div class="agent-model">execution · sonnet</div>
+      </div>
+    </div>
+
+    <!-- DEBUGGER — jitters nervously, always running -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--debugger)"></div>
+      <div class="agent-character">
+        <svg class="anim-jitter" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="20" ry="3.5" fill="#FF8C2B" opacity="0.1"/>
+          <line x1="2" y1="44" x2="13" y2="44" stroke="#FF8C2B" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+          <line x1="1" y1="51" x2="11" y2="51" stroke="#FF8C2B" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+          <line x1="3" y1="58" x2="12" y2="58" stroke="#FF8C2B" stroke-width="2" stroke-linecap="round" opacity="0.18"/>
+          <rect x="20" y="42" width="42" height="32" rx="10" fill="#CC5500"/>
+          <rect x="15" y="8" width="50" height="46" rx="22" fill="#FF8C2B"/>
+          <rect x="21" y="22" width="12" height="13" rx="6" fill="#1A1A1A"/>
+          <rect x="47" y="22" width="12" height="13" rx="6" fill="#1A1A1A"/>
+          <rect x="24" y="23" width="5" height="6" rx="2.5" fill="white"/>
+          <rect x="50" y="23" width="5" height="6" rx="2.5" fill="white"/>
+          <rect x="24" y="23" width="2.5" height="2.5" rx="1.2" fill="white" opacity="0.9"/>
+          <rect x="50" y="23" width="2.5" height="2.5" rx="1.2" fill="white" opacity="0.9"/>
+          <rect x="20" y="18" width="11" height="3" rx="1.5" fill="#CC5500" transform="rotate(10 25 19)"/>
+          <rect x="49" y="18" width="11" height="3" rx="1.5" fill="#CC5500" transform="rotate(-10 54 19)"/>
+          <ellipse cx="40" cy="39" rx="6" ry="5" fill="#1A1A1A"/>
+          <ellipse cx="40" cy="40" rx="4" ry="3" fill="#CC3300"/>
+          <ellipse cx="62" cy="18" rx="3" ry="4" fill="#FF8C2B" opacity="0.5"/>
+          <rect x="4" y="48" width="18" height="9" rx="4" fill="#FF8C2B"/>
+          <rect x="56" y="38" width="16" height="9" rx="4" fill="#FF8C2B"/>
+          <circle cx="74" cy="28" r="9" stroke="#FF8C2B" stroke-width="2.5" fill="rgba(255,140,43,0.08)"/>
+          <line x1="80" y1="34" x2="86" y2="40" stroke="#FF8C2B" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="74" cy="28" r="3.5" fill="#FF4444"/>
+          <rect x="72" y="27" width="1.5" height="1.5" rx="0.5" fill="white" opacity="0.7"/>
+          <rect x="24" y="70" width="11" height="22" rx="5" fill="#CC5500" transform="rotate(12 29 81)"/>
+          <rect x="46" y="70" width="11" height="22" rx="5" fill="#CC5500" transform="rotate(-15 51 81)"/>
+          <rect x="18" y="84" width="15" height="7" rx="3.5" fill="#AA3300" transform="rotate(12 25 87)"/>
+          <rect x="47" y="82" width="15" height="7" rx="3.5" fill="#AA3300" transform="rotate(-15 54 85)"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--debugger)">Debugger</div><div class="agent-stage">Stage 5.5</div></div>
+        <div class="agent-role">Reactive — only activates when tests fail. Max 5 diagnostic steps, then escalates. Never restarts from zero after a failed fix.</div>
+        <div class="agent-model">execution · sonnet</div>
+      </div>
+    </div>
+
+    <!-- SECURITY — barely moves, stoic as a rock -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--security)"></div>
+      <div class="agent-character">
+        <svg class="anim-stoic" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="22" ry="3.5" fill="#FF4444" opacity="0.12"/>
+          <rect x="14" y="38" width="52" height="36" rx="10" fill="#CC1111"/>
+          <path d="M28 44 L40 40 L52 44 L52 60 Q40 67 28 60 Z" fill="#FF4444" stroke="#FF6666" stroke-width="1"/>
+          <path d="M32 47 L40 44 L48 47 L48 58 Q40 63 32 58 Z" fill="#CC1111"/>
+          <path d="M35 53 L38 57 L46 48" stroke="#FF8080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <rect x="16" y="6" width="48" height="44" rx="20" fill="#FF4444"/>
+          <rect x="21" y="20" width="12" height="12" rx="5" fill="#1A1A1A"/>
+          <rect x="47" y="20" width="12" height="12" rx="5" fill="#1A1A1A"/>
+          <rect x="24" y="22" width="5" height="6" rx="2.5" fill="white"/>
+          <rect x="50" y="22" width="5" height="6" rx="2.5" fill="white"/>
+          <rect x="19" y="16" width="16" height="4" rx="2" fill="#AA1111"/>
+          <rect x="45" y="16" width="16" height="4" rx="2" fill="#AA1111"/>
+          <rect x="29" y="37" width="22" height="3.5" rx="1.75" fill="#AA1111"/>
+          <rect x="1" y="42" width="15" height="11" rx="5" fill="#FF4444"/>
+          <rect x="64" y="42" width="15" height="11" rx="5" fill="#FF4444"/>
+          <rect x="1" y="51" width="13" height="11" rx="4" fill="#CC1111"/>
+          <rect x="66" y="51" width="13" height="11" rx="4" fill="#CC1111"/>
+          <rect x="19" y="70" width="14" height="22" rx="6" fill="#CC1111"/>
+          <rect x="47" y="70" width="14" height="22" rx="6" fill="#CC1111"/>
+          <rect x="13" y="86" width="18" height="8" rx="4" fill="#AA1111"/>
+          <rect x="49" y="86" width="18" height="8" rx="4" fill="#AA1111"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--security)">Security</div><div class="agent-stage">Stage 6</div></div>
+        <div class="agent-role">Full OWASP Top 10:2025 audit. Variant analysis — finds one vuln, searches the entire codebase. Always runs. No excuses.</div>
+        <div class="agent-model"><span class="model-thinking">thinking</span> · opus</div>
+      </div>
+    </div>
+
+    <!-- REVIEWER — sways reading -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--reviewer)"></div>
+      <div class="agent-character">
+        <svg class="anim-readsway" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="20" ry="3.5" fill="#4ADE80" opacity="0.1"/>
+          <rect x="18" y="40" width="44" height="34" rx="10" fill="#1A8840"/>
+          <rect x="24" y="46" width="20" height="24" rx="3" fill="#148830" stroke="#4ADE80" stroke-width="0.5" opacity="0.7"/>
+          <rect x="26" y="50" width="16" height="1.5" rx="1" fill="#4ADE80" opacity="0.5"/>
+          <rect x="26" y="54" width="12" height="1.5" rx="1" fill="#4ADE80" opacity="0.4"/>
+          <rect x="26" y="58" width="14" height="1.5" rx="1" fill="#4ADE80" opacity="0.4"/>
+          <path d="M28 62 L30 65 L36 59" stroke="#4ADE80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <rect x="14" y="8" width="52" height="46" rx="22" fill="#4ADE80"/>
+          <rect x="19" y="24" width="16" height="11" rx="5" fill="none" stroke="#1A8840" stroke-width="2.5"/>
+          <rect x="45" y="24" width="16" height="11" rx="5" fill="none" stroke="#1A8840" stroke-width="2.5"/>
+          <line x1="35" y1="29" x2="45" y2="29" stroke="#1A8840" stroke-width="2.5"/>
+          <line x1="19" y1="29" x2="15" y2="27" stroke="#1A8840" stroke-width="2"/>
+          <line x1="61" y1="29" x2="65" y2="27" stroke="#1A8840" stroke-width="2"/>
+          <rect x="23" y="26" width="6" height="6" rx="3" fill="#1A1A1A"/>
+          <rect x="49" y="26" width="6" height="6" rx="3" fill="#1A1A1A"/>
+          <rect x="24" y="27" width="3" height="3" rx="1.5" fill="white"/>
+          <rect x="50" y="27" width="3" height="3" rx="1.5" fill="white"/>
+          <rect x="20" y="20" width="13" height="3" rx="1.5" fill="#1A8840"/>
+          <rect x="47" y="20" width="13" height="3" rx="1.5" fill="#1A8840"/>
+          <path d="M31 38 Q40 44 49 38" stroke="#1A8840" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <ellipse cx="20" cy="36" rx="5" ry="3" fill="#6AEE90" opacity="0.4"/>
+          <ellipse cx="60" cy="36" rx="5" ry="3" fill="#6AEE90" opacity="0.4"/>
+          <rect x="4" y="44" width="16" height="10" rx="5" fill="#1A8840"/>
+          <rect x="60" y="44" width="16" height="10" rx="5" fill="#1A8840"/>
+          <rect x="24" y="70" width="12" height="22" rx="6" fill="#1A8840"/>
+          <rect x="44" y="70" width="12" height="22" rx="6" fill="#1A8840"/>
+          <rect x="20" y="86" width="16" height="8" rx="4" fill="#0A6830"/>
+          <rect x="44" y="86" width="16" height="8" rx="4" fill="#0A6830"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--reviewer)">Reviewer</div><div class="agent-stage">Stage 7</div></div>
+        <div class="agent-role">Reads every changed file end-to-end. Cross-references models ↔ routes ↔ schemas ↔ tests. 3-round fix loop. Always runs.</div>
+        <div class="agent-model"><span class="model-thinking">thinking</span> · opus</div>
+      </div>
+    </div>
+
+    <!-- DEVOPS — steady bob, calm professional -->
+    <div class="agent-card-new">
+      <div class="agent-bar" style="background:var(--devops)"></div>
+      <div class="agent-character">
+        <svg class="anim-bob" style="animation-delay:0.8s" width="72" height="92" viewBox="0 0 80 100" fill="none">
+          <ellipse cx="40" cy="97" rx="20" ry="3.5" fill="#A0A8B0" opacity="0.1"/>
+          <rect x="18" y="40" width="44" height="34" rx="10" fill="#606870"/>
+          <rect x="18" y="62" width="44" height="8" rx="2" fill="#505860"/>
+          <rect x="26" y="62" width="8" height="8" fill="#404850"/>
+          <rect x="40" y="62" width="8" height="8" fill="#404850"/>
+          <rect x="14" y="8" width="52" height="46" rx="22" fill="#A0A8B0"/>
+          <rect x="12" y="12" width="56" height="14" rx="7" fill="#606870"/>
+          <rect x="8" y="18" width="64" height="8" rx="4" fill="#707880"/>
+          <rect x="22" y="28" width="10" height="10" rx="5" fill="#1A1A1A"/>
+          <rect x="48" y="28" width="10" height="10" rx="5" fill="#1A1A1A"/>
+          <rect x="25" y="29" width="4" height="5" rx="2" fill="white"/>
+          <rect x="51" y="29" width="4" height="5" rx="2" fill="white"/>
+          <rect x="21" y="24" width="12" height="3" rx="1.5" fill="#606870"/>
+          <rect x="47" y="24" width="12" height="3" rx="1.5" fill="#606870"/>
+          <path d="M33 40 Q40 44 47 41" stroke="#606870" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <ellipse cx="21" cy="38" rx="5" ry="3" fill="#B8C0C8" opacity="0.4"/>
+          <ellipse cx="59" cy="38" rx="5" ry="3" fill="#B8C0C8" opacity="0.4"/>
+          <rect x="4" y="44" width="16" height="10" rx="5" fill="#606870"/>
+          <rect x="60" y="36" width="5" height="20" rx="2.5" fill="#808890" transform="rotate(25 62 46)"/>
+          <ellipse cx="63" cy="34" rx="6" ry="5" fill="none" stroke="#808890" stroke-width="3" transform="rotate(25 63 34)"/>
+          <rect x="60" y="44" width="16" height="10" rx="5" fill="#606870"/>
+          <rect x="24" y="70" width="12" height="22" rx="6" fill="#606870"/>
+          <rect x="44" y="70" width="12" height="22" rx="6" fill="#606870"/>
+          <rect x="20" y="86" width="16" height="8" rx="4" fill="#404850"/>
+          <rect x="44" y="86" width="16" height="8" rx="4" fill="#404850"/>
+        </svg>
+      </div>
+      <div class="agent-body">
+        <div class="agent-header"><div class="agent-name" style="color:var(--devops)">DevOps</div><div class="agent-stage">Stage 8</div></div>
+        <div class="agent-role">Updates Docker, CI/CD, deploys, runs health checks via Sentry. Only activates when there are infrastructure changes to make.</div>
+        <div class="agent-model">execution · sonnet</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- PIPELINE -->
+<div class="sect" id="how">
+  <div class="eyebrow">How it works</div>
+  <h2 class="section-title">Sequential by design,<br>not by accident.</h2>
+  <p class="section-sub">Every stage has a reason to go exactly where it does. Frontend consumes Backend. You can't audit code that doesn't exist yet.</p>
+
+  <div class="pipeline-visual">
+    <div class="pipeline-stage">
+      <div class="pipeline-spine"><div class="pipeline-num">1</div><div class="pipeline-line"></div></div>
+      <div class="pipeline-content">
+        <div class="pipeline-header"><div class="pipeline-label">Planner</div><div class="pipeline-tag tag-confirm">Confirms with you</div></div>
+        <div class="pipeline-desc">Reads your project context, designs architecture, saves the PRD to <code style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)">tasuki-plans/</code>. Decomposes into one task per agent via Taskmaster. Shows you the summary and waits before any code is written.</div>
+      </div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="pipeline-spine"><div class="pipeline-num">2</div><div class="pipeline-line"></div></div>
+      <div class="pipeline-content">
+        <div class="pipeline-header"><div class="pipeline-label">QA — tests first</div><div class="pipeline-tag tag-tdd">TDD enforced</div></div>
+        <div class="pipeline-desc">Writes failing tests before any implementation exists. The test is the specification. The <code style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)">tdd-guard</code> hook mechanically blocks implementation code if no test file exists — exit code 2, no bypass.</div>
+      </div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="pipeline-spine"><div class="pipeline-num">3</div><div class="pipeline-line"></div></div>
+      <div class="pipeline-content">
+        <div class="pipeline-header"><div class="pipeline-label">DB Architect</div></div>
+        <div class="pipeline-desc">Verifies the plan matches QA's tests before creating anything. Migration + model in production-safe DDL patterns: expand-contract for renames, batched defaults for large tables.</div>
+      </div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="pipeline-spine"><div class="pipeline-num">4</div><div class="pipeline-line"></div></div>
+      <div class="pipeline-content">
+        <div class="pipeline-header"><div class="pipeline-label">Backend Dev</div></div>
+        <div class="pipeline-desc">Runs the failing tests first to confirm they fail for the right reason. Implements until all tests pass. Produces a structured handoff with every new endpoint, auth behavior, and env var needed by Frontend.</div>
+      </div>
+    </div>
+    <div class="pipeline-checkpoint"><span>⚡ test checkpoint</span><div class="checkpoint-line"></div><span>all pass → continue · any fail → debugger</span></div>
+    <div class="pipeline-stage">
+      <div class="pipeline-spine"><div class="pipeline-num">5</div><div class="pipeline-line"></div></div>
+      <div class="pipeline-content">
+        <div class="pipeline-header"><div class="pipeline-label">Frontend Dev</div><div class="pipeline-tag tag-confirm">Design preview</div></div>
+        <div class="pipeline-desc">Asks if you have a Figma file or want a generated preview before building. Builds responsive, accessible UI consuming verified backend endpoints. All states covered.</div>
+      </div>
+    </div>
+    <div class="pipeline-checkpoint"><span>⚡ test checkpoint</span><div class="checkpoint-line"></div><span>all pass → security · any fail → debugger</span></div>
+    <div class="pipeline-stage">
+      <div class="pipeline-spine"><div class="pipeline-num">6</div><div class="pipeline-line"></div></div>
+      <div class="pipeline-content">
+        <div class="pipeline-header"><div class="pipeline-label">Security</div><div class="pipeline-tag tag-always">Always runs</div></div>
+        <div class="pipeline-desc">OWASP Top 10:2025 full checklist, automated Semgrep scan, and variant analysis. Finds one vulnerability, searches the entire codebase for the same root cause pattern.</div>
+      </div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="pipeline-spine"><div class="pipeline-num">7</div><div class="pipeline-line"></div></div>
+      <div class="pipeline-content">
+        <div class="pipeline-header"><div class="pipeline-label">Reviewer</div><div class="pipeline-tag tag-always">Always runs</div></div>
+        <div class="pipeline-desc">Reads every changed file end-to-end, not just the diff. Cross-references models ↔ routes ↔ schemas ↔ tests. 3-round fix loop with regression detection after every change.</div>
+      </div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="pipeline-spine"><div class="pipeline-num" style="font-size:9px;">8–9</div></div>
+      <div class="pipeline-content">
+        <div class="pipeline-header"><div class="pipeline-label">DevOps + Completion</div></div>
+        <div class="pipeline-desc">Deploys if needed, health checks via Sentry, then writes a clean summary. Lessons learned save to the knowledge graph — the next task starts smarter.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- COMPARISON -->
+<div class="sect" id="compare">
+  <div class="eyebrow">Works with 8 AI tools</div>
+  <h2 class="section-title">Built for Claude Code.<br>Compatible with the rest.</h2>
+  <p class="section-sub">One onboard generates config for every tool. Claude Code gets full mechanical automation. Every other tool gets structured role-switching — still dramatically better than nothing.</p>
+
+  <div class="comparison-grid">
+    <div class="comp-card feat">
+      <div class="comp-head feat-head">
+        <div class="comp-tool">Claude Code</div>
+        <div class="comp-badge badge-full">Full pipeline</div>
+      </div>
+      <div>
+        <div class="comp-row"><div class="comp-feat">Pipeline execution</div><div class="comp-val val-yes">Automatic (Agent() sub-agents)</div></div>
+        <div class="comp-row"><div class="comp-feat">TDD hook</div><div class="comp-val val-yes">Mechanical block (exit 2)</div></div>
+        <div class="comp-row"><div class="comp-feat">Security hook</div><div class="comp-val val-yes">Mechanical block</div></div>
+        <div class="comp-row"><div class="comp-feat">Agent isolation</div><div class="comp-val val-yes">Separate context per agent</div></div>
+        <div class="comp-row"><div class="comp-feat">Memory vault</div><div class="comp-val val-yes">Full knowledge graph</div></div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-head">
+        <div>
+          <div class="comp-tool">Cursor · Codex · Copilot</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">+ Windsurf, Continue, Roo Code, Gemini</div>
+        </div>
+        <div class="comp-badge badge-compat">Compatible</div>
+      </div>
+      <div>
+        <div class="comp-row"><div class="comp-feat">Pipeline execution</div><div class="comp-val val-mid">Role-switching (guided)</div></div>
+        <div class="comp-row"><div class="comp-feat">TDD hook</div><div class="comp-val val-mid">Advisory rules</div></div>
+        <div class="comp-row"><div class="comp-feat">Security hook</div><div class="comp-val val-mid">Advisory rules</div></div>
+        <div class="comp-row"><div class="comp-feat">Agent isolation</div><div class="comp-val val-no">Same context</div></div>
+        <div class="comp-row"><div class="comp-feat">Memory vault</div><div class="comp-val val-yes">Full knowledge graph</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- PRICING -->
+<div class="sect" id="pricing">
+  <div class="eyebrow">Cost</div>
+  <h2 class="section-title">Tasuki is free.<br>You pay for API credits.</h2>
+  <p class="section-sub">The CLI is MIT open source. Onboarding is bash — $0, zero API calls. The only cost is your normal AI usage, made more efficient.</p>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-mode">Fast fix</div>
+      <div class="price-desc">Small bugs, quick tweaks. Complexity 1–3.</div>
+      <div class="price-amount">~$0.26</div>
+      <div class="price-range">~$0.15 – $0.50 per task</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>3 agents (Planner, Dev, Reviewer)</li>
+        <li>~18K tokens</li>
+        <li>Tests + security still run</li>
+        <li>Skips unused stages</li>
+      </ul>
+      <div class="price-cli">tasuki mode fast</div>
+    </div>
+    <div class="price-card feat-price">
+      <div class="price-mode">Standard feature</div>
+      <div class="price-desc">New endpoints, components, integrations. Complexity 5–6.</div>
+      <div class="price-amount">~$0.68</div>
+      <div class="price-range">~$0.50 – $1.50 per task</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>6 agents, full pipeline</li>
+        <li>~46K tokens</li>
+        <li>TDD + OWASP audit</li>
+        <li>3-round review loop</li>
+      </ul>
+      <div class="price-cli">tasuki mode standard</div>
+    </div>
+    <div class="price-card">
+      <div class="price-mode">Full feature</div>
+      <div class="price-desc">Complex features, auth systems. Complexity 8–10.</div>
+      <div class="price-amount">~$1–3</div>
+      <div class="price-range">varies with retries &amp; fix rounds</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>All 9 agents</li>
+        <li>~71K tokens baseline</li>
+        <li>Debugger rounds if needed</li>
+        <li>Full variant analysis</li>
+      </ul>
+      <div class="price-cli">tasuki mode serious</div>
+    </div>
+  </div>
+
+  <p class="price-note">
+    <strong>$50 in API credits ≈ 50–80 tasks ≈ roughly one month of active development.</strong><br>
+    ~60% savings from model tiering · ~86% from filtered memory loading · ~40% from agent routing
+  </p>
+</div>
+
+<hr class="div">
+
+<!-- FAQ -->
+<div class="faq-wrap" id="faq">
+  <div class="eyebrow">FAQ</div>
+  <h2 class="section-title">Common questions</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Do I need to change how I talk to my AI?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">No. Tasuki generates config files that your AI reads automatically. You ask for a feature the same way you always did — Tasuki changes how the AI responds. Think of it like ESLint: you don't say "hey ESLint", it just works.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What does "onboard" actually do?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Runs 5 bash detectors against your actual files — no API calls, zero tokens, $0. Detects stack from real imports, versions from package files, paths from directory structure. Generates .tasuki/ with 9 configured agents, 3 hooks, verified project facts, and an initialized knowledge graph. Takes about 10 seconds.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Is the pipeline fully automatic with Claude Code?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes, for Claude Code. Stages 1–9 run automatically via Agent() sub-agent calls. It stops twice for your input: after the Planner shows you the plan and before Frontend starts building. Everything else is automatic. On Cursor and other tools, the pipeline is structured role-switching — the AI follows instructions in order, but you guide transitions between stages.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What if my project doesn't have tests yet?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">That's fine — the QA agent writes the tests first for new features. The tdd-guard hook only blocks edits to implementation files when no corresponding test file exists — it won't break your existing codebase.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Does Tasuki send my code anywhere?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">No. Tasuki is a CLI tool that runs entirely locally — it generates config files. Your code goes wherever your existing AI tool sends it, same as before. Tasuki adds zero new data flows.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What stacks does it support?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">13 profiles auto-detected: FastAPI, Django, Flask, Next.js, SvelteKit, Nuxt, Express, NestJS, Rails, Gin, Spring Boot, Laravel, and Generic fallback. If your stack isn't listed, Generic still configures all 9 agents — it just won't have stack-specific migration patterns.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- CTA -->
+<div class="cta-section" id="install">
+  <h2 class="cta-title">One command.<br>Nine engineers.<br>Zero cold starts.</h2>
+  <p class="cta-sub">Free, open source, runs locally. No account needed.</p>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div class="cta-install" onclick="copyCmd(this)">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
+      npm install -g tasuki
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </div>
+    <div class="cta-hint" id="copy-hint">click to copy</div>
+  </div>
+
+  <div style="margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <a href="https://github.com/ForeroAlexander/Tasuki" class="btn btn-ghost" target="_blank" style="font-size:14px;padding:11px 24px;">View on GitHub</a>
+    <a href="https://github.com/ForeroAlexander/Tasuki/blob/main/README.md" class="btn btn-ghost" target="_blank" style="font-size:14px;padding:11px 24px;">Read the docs</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <svg width="18" height="18" viewBox="0 0 92 84" fill="none" style="opacity:0.5">
+      <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" opacity="0.55"/>
+      <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.46"/>
+      <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444"  stroke-width="1.2" opacity="0.56"/>
+      <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80"  stroke-width="1.2" opacity="0.5"/>
+      <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>
+      <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>
+      <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>
+      <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>
+      <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>
+      <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>
+      <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>
+      <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>
+      <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>
+    </svg>
+    © 2026 Tasuki · MIT License
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/ForeroAlexander/Tasuki" target="_blank">GitHub</a>
+    <a href="https://github.com/ForeroAlexander/Tasuki/blob/main/README.md" target="_blank">Docs</a>
+    <a href="https://github.com/ForeroAlexander/Tasuki/issues" target="_blank">Issues</a>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn) { btn.parentElement.classList.toggle('open'); }
+
+function copyCmd(el) {
+  navigator.clipboard.writeText('npm install -g tasuki').then(() => {
+    const hint = document.getElementById('copy-hint');
+    if (hint) { hint.textContent = '✓ copied'; hint.style.color = 'var(--reviewer)'; setTimeout(() => { hint.textContent = 'click to copy'; hint.style.color = ''; }, 2000); }
+  });
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.agent-card, .pipeline-stage, .price-card, .comp-card').forEach(el => {
+  el.style.opacity = '0'; el.style.transform = 'translateY(14px)';
+  el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
