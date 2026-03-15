@@ -1,0 +1,26 @@
+<svg width="200" height="180" viewBox="0 0 92 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Connections -->
+  <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+  <line x1="18" y1="12" x2="14" y2="44"  stroke="#D8D4CC" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+  <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="52" y1="8"  x2="62" y2="48"  stroke="#F5E642" stroke-width="1.2" stroke-linecap="round" opacity="0.42"/>
+  <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF" stroke-width="1.2" stroke-linecap="round" opacity="0.52"/>
+  <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF" stroke-width="1.2" stroke-linecap="round" opacity="0.52"/>
+  <line x1="62" y1="48" x2="14" y2="44"  stroke="#00D4FF" stroke-width="1.2" stroke-linecap="round" opacity="0.22"/>
+  <line x1="62" y1="48" x2="76" y2="60"  stroke="#00D4FF" stroke-width="1.2" stroke-linecap="round" opacity="0.2"/>
+  <line x1="38" y1="58" x2="14" y2="44"  stroke="#FF7B6B" stroke-width="1.2" stroke-linecap="round" opacity="0.32"/>
+  <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B" stroke-width="1.2" stroke-linecap="round" opacity="0.46"/>
+  <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444" stroke-width="1.2" stroke-linecap="round" opacity="0.56"/>
+  <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Agent nodes -->
+  <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>  <!-- planner -->
+  <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>  <!-- qa -->
+  <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>  <!-- db-architect -->
+  <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>  <!-- backend -->
+  <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>  <!-- frontend -->
+  <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>  <!-- debugger -->
+  <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>  <!-- security -->
+  <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>  <!-- reviewer -->
+  <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>  <!-- devops -->
+</svg>
