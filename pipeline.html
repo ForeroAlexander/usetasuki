@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline — Tasuki</title>
+<meta name="description" content="The 9-stage multi-agent pipeline: sequential by design, with TDD enforcement, security auditing, and structured handoffs between specialized agents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="26" height="26" viewBox="0 0 92 84" fill="none">
+      <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" opacity="0.55"/>
+      <line x1="18" y1="12" x2="14" y2="44"  stroke="#D8D4CC" stroke-width="1.2" opacity="0.25"/>
+      <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="52" y1="8"  x2="62" y2="48"  stroke="#F5E642"  stroke-width="1.2" opacity="0.42"/>
+      <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="14" y2="44"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.22"/>
+      <line x1="38" y1="58" x2="14" y2="44"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.32"/>
+      <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.46"/>
+      <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444"  stroke-width="1.2" opacity="0.56"/>
+      <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="62" y1="48" x2="76" y2="60"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.2"/>
+      <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>
+      <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>
+      <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>
+      <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>
+      <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>
+      <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>
+      <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>
+      <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>
+      <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>
+    </svg>
+    <span class="nav-wordmark">tasuki</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="pipeline.html" class="active">Pipeline</a></li>
+    <li><a href="memory.html">Memory</a></li>
+    <li><a href="cli.html">CLI</a></li>
+    <li><a href="index.html#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="https://github.com/ForeroAlexander/Tasuki" class="btn btn-ghost" target="_blank">GitHub</a>
+    <a href="index.html#install" class="btn btn-white">Install free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-grid"></div>
+  <div class="page-hero-eyebrow">Architecture</div>
+  <h1 class="page-hero-title">The 9-Stage Pipeline</h1>
+  <p class="page-hero-sub">Sequential by design — every stage has a reason to go exactly where it does. Click any stage to see what it does, what tools it uses, and how it hands off to the next.</p>
+</div>
+
+<!-- PIPELINE DEEP -->
+<div class="sect">
+
+  <!-- STAGE 1: PLANNER -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(216,212,204,0.3);color:var(--planner);background:rgba(216,212,204,0.04);">1</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--planner);">Planner</div>
+        <div class="stage-head-tagline">Designs architecture · writes PRD · decomposes work · waits for your OK</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag tag-confirm">Confirms with you</span>
+        <span class="pipeline-tag" style="background:rgba(216,212,204,0.05);color:var(--text3);border:1px solid var(--border);">thinking · opus</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>What it reads</h4>
+          <ul class="stage-list">
+            <li><code>.tasuki/agents/planner.md</code> — full role definition</li>
+            <li><code>project-context.md</code> — business understanding from onboard interview</li>
+            <li><code>project-facts.md</code> — verified stack, paths, commands</li>
+            <li><code>tasuki-plans/index.md</code> — previous plans to avoid repetition</li>
+            <li><code>capability-map.yaml</code> — which agents are available and their domains</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>What it produces</h4>
+          <ul class="stage-list">
+            <li><code>tasuki-plans/{feature}/prd.md</code> — product requirements doc</li>
+            <li><code>tasuki-plans/{feature}/plan.md</code> — implementation plan</li>
+            <li><code>tasuki-plans/{feature}/status.md</code> — tracking file (updated by each stage)</li>
+            <li>One Taskmaster task per agent — ~50 tokens vs 2000 for full PRD</li>
+            <li>Brief plan summary shown to you before any code is written</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>MCP tools</h4>
+          <div class="tool-pills">
+            <span class="tool-pill">Taskmaster MCP</span>
+            <span class="tool-pill">Context7 MCP</span>
+          </div>
+          <div class="info-box" style="margin-top:12px;">
+            <strong>Taskmaster decoupling:</strong> The Planner pushes one task per agent (~50 tokens each). When QA runs, it reads only its own task — not the full PRD. This saves ~12K tokens per pipeline.
+          </div>
+        </div>
+        <div class="stage-section">
+          <h4>Example output</h4>
+          <div class="stage-code">
+<span style="color:var(--planner);">[Planner]</span> <span class="c-dim">Feature: JWT Authentication</span><br>
+<span class="c-dim">───────────────────────────────</span><br>
+<span class="c-dim">Scope:</span> <span style="color:var(--text);">Login, register, refresh, revoke</span><br>
+<span class="c-dim">QA:</span>     <span style="color:var(--text);">12 test cases, auth middleware</span><br>
+<span class="c-dim">DBA:</span>    <span style="color:var(--text);">users, sessions, refresh_tokens</span><br>
+<span class="c-dim">Backend:</span> <span style="color:var(--text);">4 routes, JWT service, middleware</span><br>
+<span class="c-dim">Frontend:</span> <span style="color:var(--text);">login/register/profile pages</span><br>
+<br>
+<span class="c-warn">Continue with implementation? [y/n]</span>
+          </div>
+        </div>
+        <div class="stage-section stage-section-full">
+          <h4>Why it confirms with you</h4>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;">The Planner stops here because architecture decisions are the human's domain. Once you say yes, the full pipeline runs automatically on Claude Code. This is the only confirmation needed — except for the Frontend design preview at Stage 5.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 2: QA -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(245,230,66,0.3);color:var(--qa);background:rgba(245,230,66,0.04);">2</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--qa);">QA</div>
+        <div class="stage-head-tagline">Writes failing tests FIRST — the test is the specification</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag tag-tdd">TDD enforced</span>
+        <span class="pipeline-tag" style="background:rgba(245,230,66,0.05);color:var(--text3);border:1px solid var(--border);">execution · sonnet</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>Before it acts (MANDATORY)</h4>
+          <ul class="stage-list">
+            <li>Read <code>project-facts.md</code></li>
+            <li><code>grep [[qa]]</code> in <code>memory-vault/heuristics/</code> — its permanent rules</li>
+            <li><code>grep [[qa]]</code> in <code>memory-vault/errors/</code> — mistakes to avoid</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Schema protocol</h4>
+          <ul class="stage-list">
+            <li>If the model doesn't exist yet → BLOCK, report to DBA with schema needed</li>
+            <li>Tests MUST fail when written — if they pass, they're not testing new behavior</li>
+            <li>Writes test for every endpoint, every state, every auth edge case</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>MCP tools</h4>
+          <div class="tool-pills">
+            <span class="tool-pill">Taskmaster MCP</span>
+            <span class="tool-pill">Playwright MCP</span>
+            <span class="tool-pill">Context7 MCP</span>
+          </div>
+        </div>
+        <div class="stage-section">
+          <h4>Example output</h4>
+          <div class="stage-code">
+<span style="color:var(--qa);">[QA]</span> <span class="c-dim">Writing failing tests (RED phase)</span><br>
+<span class="c-dim">  </span><span class="c-err">✗</span> <span style="color:var(--text);">test_login_valid_credentials</span><br>
+<span class="c-dim">  </span><span class="c-err">✗</span> <span style="color:var(--text);">test_login_wrong_password → 401</span><br>
+<span class="c-dim">  </span><span class="c-err">✗</span> <span style="color:var(--text);">test_jwt_missing → 401 not 500</span><br>
+<span class="c-dim">  </span><span class="c-err">✗</span> <span style="color:var(--text);">test_refresh_token_rotation</span><br>
+<span class="c-dim">  </span><span class="c-err">✗</span> <span style="color:var(--text);">test_revoke_all_sessions</span><br>
+<span class="c-dim">  14 tests written · all failing ✓</span><br>
+<span class="c-warn">  Handoff → DBA: needs users, sessions tables</span>
+          </div>
+        </div>
+        <div class="stage-section stage-section-full">
+          <h4>Why TDD is mechanically enforced</h4>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;">The <code>tdd-guard</code> hook intercepts every Write/Edit call. If you try to edit <code>app/routers/users.py</code> without <code>tests/test_users.py</code> existing → exit code 2, blocked. This is not advisory — it's a mechanical restriction. Without it, Backend Dev in Stage 4 could write implementation without any tests, and "testing" becomes "confirming what I already wrote works".</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 3: DB ARCH -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(74,158,255,0.3);color:var(--dbarch);background:rgba(74,158,255,0.04);">3</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--dbarch);">DB Architect</div>
+        <div class="stage-head-tagline">Zero-downtime migrations · verifies plan matches tests · production-safe DDL</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag" style="background:rgba(74,158,255,0.06);color:var(--dbarch);border:1px solid rgba(74,158,255,0.2);">execution · sonnet</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>Pipeline coordination check</h4>
+          <ul class="stage-list">
+            <li>Reads Planner's plan AND QA's tests</li>
+            <li>Verifies they agree on schema before creating anything</li>
+            <li>If discrepancy → reports to Planner before touching the DB</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Production-safe DDL patterns</h4>
+          <ul class="stage-list">
+            <li>Column renames → expand-contract (never direct rename)</li>
+            <li>NOT NULL additions → add nullable first, backfill, then constrain</li>
+            <li>Large table defaults → batched update, never inline</li>
+            <li>Index creation → CONCURRENTLY to avoid table lock</li>
+            <li>Every migration has an <code>upgrade()</code> and <code>downgrade()</code></li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>MCP tools</h4>
+          <div class="tool-pills">
+            <span class="tool-pill">Taskmaster MCP</span>
+            <span class="tool-pill">Postgres MCP</span>
+            <span class="tool-pill">Context7 MCP</span>
+          </div>
+        </div>
+        <div class="stage-section">
+          <h4>Example output</h4>
+          <div class="stage-code">
+<span style="color:var(--dbarch);">[DB Arch]</span> <span class="c-dim">Creating migration</span><br>
+<span class="c-ok">  ✓</span> <span style="color:var(--text);">users table (id, email, hashed_pw)</span><br>
+<span class="c-ok">  ✓</span> <span style="color:var(--text);">sessions (id, user_id, token, expires)</span><br>
+<span class="c-ok">  ✓</span> <span style="color:var(--text);">refresh_tokens (id, session_id, hash)</span><br>
+<span class="c-ok">  ✓</span> <span style="color:var(--text);">INDEX CONCURRENTLY on sessions.token</span><br>
+<span class="c-ok">  ✓</span> <span style="color:var(--text);">RLS policy: users can only read own rows</span><br>
+<span class="c-dim">  Run: alembic upgrade head</span>
+          </div>
+        </div>
+        <div class="stage-section stage-section-full">
+          <h4>Why DBA runs before Backend</h4>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;">Backend Dev imports from models. If the model doesn't exist, the import fails with <code>ImportError</code>. Running DBA first means Backend starts with tables that exist, indexes optimized, and models importable. Running in parallel would cause random import failures depending on race conditions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 4: BACKEND -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(0,212,255,0.3);color:var(--backend);background:rgba(0,212,255,0.04);">4</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--backend);">Backend Dev</div>
+        <div class="stage-head-tagline">Runs failing tests first · implements until all pass · structured handoff to Frontend</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag" style="background:rgba(0,212,255,0.05);color:var(--backend);border:1px solid rgba(0,212,255,0.2);">execution · sonnet</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>Test consumption protocol</h4>
+          <ul class="stage-list">
+            <li>Runs QA's tests first — confirms they fail for the RIGHT reason</li>
+            <li><code>ImportError</code> → DBA needs to create model → escalate</li>
+            <li><code>404</code> → correct, route doesn't exist yet → implement</li>
+            <li>After implementation: ALL tests must pass (GREEN phase)</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Implements</h4>
+          <ul class="stage-list">
+            <li>Routers / controllers / handlers</li>
+            <li>Service layer with business logic</li>
+            <li>Pydantic schemas / request-response models</li>
+            <li>Authentication middleware</li>
+            <li>Background jobs (Celery, ARQ, etc.)</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Structured handoff to Frontend</h4>
+          <ul class="stage-list">
+            <li>Every new endpoint with method, path, auth requirements</li>
+            <li>Request/response schemas with types</li>
+            <li>Auth flows (JWT header format, token refresh endpoint)</li>
+            <li>Error codes and their meanings</li>
+            <li>New env vars needed</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Example output</h4>
+          <div class="stage-code">
+<span style="color:var(--backend);">[Backend]</span> <span class="c-dim">Running tests (should fail)</span><br>
+<span class="c-err">  FAILED</span> <span class="c-dim">test_login → 404 ✓ expected</span><br>
+<span class="c-dim">  Implementing auth routes...</span><br>
+<span style="color:var(--backend);">[Backend]</span> <span class="c-dim">Running tests (should pass)</span><br>
+<span class="c-ok">  PASSED</span> <span class="c-dim">14/14 ✓</span><br>
+<span class="c-dim">  Handoff: POST /auth/login, POST /auth/register</span><br>
+<span class="c-dim">  POST /auth/refresh, DELETE /auth/logout</span><br>
+<span class="c-dim">  Bearer token required on: /users/*, /posts/*</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST CHECKPOINT -->
+  <div class="checkpoint-block">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 3L6 10L3 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>⚡ test checkpoint — all pass → Stage 5 · any fail → Debugger (Stage 5.5)</span>
+  </div>
+
+  <!-- STAGE 5: FRONTEND -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(255,123,107,0.3);color:var(--frontend);background:rgba(255,123,107,0.04);">5</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--frontend);">Frontend Dev</div>
+        <div class="stage-head-tagline">Design preview first · accessible + responsive · all states covered</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag tag-confirm">Design preview</span>
+        <span class="pipeline-tag" style="background:rgba(255,123,107,0.05);color:var(--text3);border:1px solid var(--border);">execution · sonnet</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>Step 5a — Design reference</h4>
+          <ul class="stage-list">
+            <li><strong style="color:var(--text);">Option A — Figma:</strong> Figma MCP pulls exact specs → "Build with these specs?"</li>
+            <li><strong style="color:var(--text);">Option B — Stitch:</strong> Stitch MCP generates preview → you approve → then build</li>
+            <li><strong style="color:var(--text);">Option C — Skip:</strong> "Just build it" → uses project's existing design system</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Step 5b — Implementation</h4>
+          <ul class="stage-list">
+            <li>Uses <code>/ui-ux-pro-max</code> skill: 161 rules, 67 styles, 57 font pairings</li>
+            <li>Responsive: mobile (320px), tablet (768px), desktop (1440px)</li>
+            <li>Accessibility: semantic HTML, ARIA labels, keyboard nav, 4.5:1 contrast</li>
+            <li>All states: loading, error, empty, success</li>
+            <li>XSS protection in every form and display</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>MCP tools</h4>
+          <div class="tool-pills">
+            <span class="tool-pill">Taskmaster MCP</span>
+            <span class="tool-pill">Figma MCP</span>
+            <span class="tool-pill">Stitch MCP</span>
+            <span class="tool-pill">Playwright MCP</span>
+            <span class="tool-pill">Context7 MCP</span>
+          </div>
+        </div>
+        <div class="stage-section">
+          <h4>Why Frontend goes after Backend</h4>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;">The frontend consumes the backend's endpoints. If both built in parallel, Frontend would assume a response structure that might not match what Backend implemented. The API contract is defined when Backend finishes — that's when Frontend can reliably build against it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 5.5: DEBUGGER -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(255,140,43,0.3);color:var(--debugger);background:rgba(255,140,43,0.04);">5.5</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--debugger);">Debugger</div>
+        <div class="stage-head-tagline">Reactive — only activates on test failure · max 5 diagnostic steps · never restarts</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag tag-reactive">Reactive</span>
+        <span class="pipeline-tag" style="background:rgba(255,140,43,0.05);color:var(--text3);border:1px solid var(--border);">execution · sonnet</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>Investigation protocol</h4>
+          <ul class="stage-list">
+            <li><strong style="color:var(--text);">Step 1:</strong> Categorize symptom (crash, wrong data, slow, auth failure)</li>
+            <li><strong style="color:var(--text);">Step 2:</strong> Gather evidence (logs, DB state, git log, resource usage)</li>
+            <li><strong style="color:var(--text);">Step 3:</strong> Form hypotheses ranked by likelihood</li>
+            <li><strong style="color:var(--text);">Step 4:</strong> Test hypotheses (read code paths, check DB, verify auth)</li>
+            <li><strong style="color:var(--text);">Step 5:</strong> Confirm root cause — must explain ALL symptoms</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Safety net</h4>
+          <ul class="stage-list">
+            <li>Max 5 active diagnostic steps</li>
+            <li>If no root cause after 5 → UNCONFIRMED report → escalate to user</li>
+            <li>After fix fails: reads previous diagnosis + fix → investigates only the delta (never starts from zero)</li>
+            <li>Max 3 fix rounds before escalating</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>MCP tools</h4>
+          <div class="tool-pills">
+            <span class="tool-pill">Sentry MCP</span>
+            <span class="tool-pill">Postgres MCP</span>
+            <span class="tool-pill">Context7 MCP</span>
+          </div>
+        </div>
+        <div class="stage-section">
+          <h4>Example output</h4>
+          <div class="stage-code">
+<span style="color:var(--debugger);">[Debugger]</span> <span class="c-dim">Tests failing at Stage 4</span><br>
+<span class="c-dim">  Symptom: 422 on POST /auth/login</span><br>
+<span class="c-dim">  Evidence: schema expects email_address, model has email</span><br>
+<span class="c-dim">  Root cause: field name mismatch DBA↔QA</span><br>
+<span class="c-warn">  Delegating fix → Backend Dev</span><br>
+<span class="c-dim">  Re-running tests...</span><br>
+<span class="c-ok">  14/14 PASSED ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST CHECKPOINT 2 -->
+  <div class="checkpoint-block">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 3L6 10L3 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>⚡ test checkpoint — all pass → Stage 6 (Security) · any fail → Debugger again</span>
+  </div>
+
+  <!-- STAGE 6: SECURITY -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(255,68,68,0.3);color:var(--security);background:rgba(255,68,68,0.04);">6</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--security);">Security</div>
+        <div class="stage-head-tagline">OWASP Top 10:2025 · variant analysis · always runs · no false positives accepted</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag tag-always">Always runs</span>
+        <span class="pipeline-tag" style="background:rgba(255,68,68,0.05);color:var(--text3);border:1px solid var(--border);">thinking · opus</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>4-phase audit</h4>
+          <ul class="stage-list">
+            <li><strong style="color:var(--text);">Phase 1:</strong> Automated scans (Semgrep MCP, language-specific rules)</li>
+            <li><strong style="color:var(--text);">Phase 2:</strong> OWASP Top 10:2025 checklist walk — 10 categories, 47+ items</li>
+            <li><strong style="color:var(--text);">Phase 3:</strong> Manual verification (project-specific attack vectors)</li>
+            <li><strong style="color:var(--text);">Phase 4:</strong> Variant analysis — for each CRITICAL/HIGH finding</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Variant analysis (Phase 4)</h4>
+          <ul class="stage-list">
+            <li>Understand the root cause, not just the symptom</li>
+            <li>Search exact pattern across entire codebase</li>
+            <li>Identify abstraction points (wrappers, helpers)</li>
+            <li>Generalize search iteratively</li>
+            <li>Triage ALL instances as independent findings</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>False positive protocol</h4>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:8px;">These 6 rationalizations are explicitly rejected:</p>
+          <ul class="stage-list">
+            <li>"It's only used internally" → internal services get compromised</li>
+            <li>"Input is validated elsewhere" → show me WHERE</li>
+            <li>"We'll fix it later" → accepted risk, not FP</li>
+            <li>"Same pattern everywhere" → N vulnerabilities, not zero</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>MCP tools</h4>
+          <div class="tool-pills">
+            <span class="tool-pill">Semgrep MCP</span>
+            <span class="tool-pill">Sentry MCP</span>
+          </div>
+          <div class="info-box" style="margin-top:12px;">
+            Verdict: <strong>PASS</strong> / <strong>PASS (N accepted risks)</strong> / <strong>FAIL</strong>. CRITICAL unresolved → FAIL, pipeline stops.
+          </div>
+        </div>
+        <div class="stage-section stage-section-full">
+          <h4>Why Security runs after all code exists</h4>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;">You can't audit partial code. A security audit on half-written code produces false positives (auth is added later) and false negatives (you can't see component interactions). Security needs the complete system — backend + frontend + migrations — to find real vulnerabilities and their cross-layer interactions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 7: REVIEWER -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(74,222,128,0.3);color:var(--reviewer);background:rgba(74,222,128,0.04);">7</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--reviewer);">Reviewer</div>
+        <div class="stage-head-tagline">Reads every changed file · cross-references all layers · 3-round fix loop</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag tag-always">Always runs</span>
+        <span class="pipeline-tag" style="background:rgba(74,222,128,0.05);color:var(--text3);border:1px solid var(--border);">thinking · opus</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>What it reviews</h4>
+          <ul class="stage-list">
+            <li>Reads ALL changed files end-to-end (not just the diff)</li>
+            <li>Cross-references: models ↔ routes ↔ schemas ↔ tests ↔ migrations</li>
+            <li>Runs Semgrep MCP for patterns the eye might miss</li>
+            <li>Verifies test coverage for every new endpoint and feature</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>3-round fix loop</h4>
+          <ul class="stage-list">
+            <li><strong style="color:var(--text);">Round 1:</strong> Review → find issues → delegate fixes</li>
+            <li><strong style="color:var(--text);">Round 2:</strong> Re-review fixed files + files that import them (regression check)</li>
+            <li><strong style="color:var(--text);">Round 3:</strong> Final review — Clean → APPROVE · Broken → REQUEST CHANGES</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Exit conditions</h4>
+          <ul class="stage-list">
+            <li>All CRITICAL + WARNING resolved → <span style="color:var(--reviewer);">APPROVE</span></li>
+            <li>CRITICAL unresolved after 3 rounds → <span style="color:var(--security);">REQUEST CHANGES</span> (NEVER approves)</li>
+            <li>Only SUGGESTIONs remaining → APPROVE with notes</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Example output</h4>
+          <div class="stage-code">
+<span style="color:var(--reviewer);">[Reviewer]</span> <span class="c-dim">Round 1</span><br>
+<span class="c-err">  CRITICAL:</span> <span style="color:var(--text);">No rate limiting on /auth/login</span><br>
+<span class="c-warn">  WARNING:</span>  <span style="color:var(--text);">Missing test for token expiry</span><br>
+<span class="c-dim">  Delegating → Backend Dev...</span><br>
+<span style="color:var(--reviewer);">[Reviewer]</span> <span class="c-dim">Round 2</span><br>
+<span class="c-ok">  ✓</span> <span class="c-dim">Rate limiting fixed + tests added</span><br>
+<span class="c-ok">  ✓</span> <span class="c-dim">No regressions detected</span><br>
+<span class="c-ok">  APPROVE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 8-9 -->
+  <div class="stage-block" onclick="toggleStage(this)">
+    <div class="stage-head">
+      <div class="stage-num-badge" style="border-color:rgba(160,168,176,0.3);color:var(--devops);background:rgba(160,168,176,0.04);font-size:9px;">8–9</div>
+      <div class="stage-head-info">
+        <div class="stage-head-name" style="color:var(--devops);">DevOps + Completion</div>
+        <div class="stage-head-tagline">Deploys · health checks · writes memory · sends summary</div>
+      </div>
+      <div class="stage-tags">
+        <span class="pipeline-tag" style="background:rgba(160,168,176,0.05);color:var(--text3);border:1px solid var(--border);">execution · sonnet</span>
+      </div>
+      <svg class="stage-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
+    </div>
+    <div class="stage-body">
+      <div class="stage-body-inner">
+        <div class="stage-section">
+          <h4>Stage 8 — DevOps</h4>
+          <ul class="stage-list">
+            <li>Updates Dockerfile / docker-compose if new services or ports</li>
+            <li>Updates CI/CD pipeline if new tests or env vars</li>
+            <li>Deploys or prepares deploy command</li>
+            <li>Checks Sentry MCP for errors after deploy</li>
+          </ul>
+        </div>
+        <div class="stage-section">
+          <h4>Stage 9 — Completion</h4>
+          <ul class="stage-list">
+            <li>Shows summary: feature name, stages run, files changed, tests passing</li>
+            <li>Lists next steps: env vars to set, migrations to run, docker restart needed</li>
+            <li>Writes to memory vault only if real insight (non-obvious root cause, new pattern)</li>
+            <li>Marks all Taskmaster tasks complete</li>
+          </ul>
+        </div>
+        <div class="stage-section stage-section-full">
+          <h4>Memory write conditions (Stage 9)</h4>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px;">The agent only writes to the vault if one of these conditions is true — not after every task:</p>
+          <ul class="stage-list">
+            <li>Root cause was non-obvious (required >2 investigation steps)</li>
+            <li>A fix introduced a regression that wasn't caught immediately</li>
+            <li>Discovered a pattern that applies to other parts of the codebase</li>
+            <li>A convention violation was caught by Reviewer</li>
+            <li>A security finding was new (not in OWASP checklist)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- MODE COMPARISON -->
+<div class="sect">
+  <div class="eyebrow">Execution modes</div>
+  <h2 class="section-title">Stages run vary<br>by complexity.</h2>
+  <p class="section-sub">Capability-based routing skips agents when there's nothing for them to do. A pure bug fix doesn't need a DB migration.</p>
+
+  <div class="mode-grid">
+    <div class="mode-card">
+      <div class="mode-name" style="color:var(--reviewer);">fast</div>
+      <div class="mode-cost">~$0.26</div>
+      <div class="mode-range">~$0.15 – $0.50 · complexity 1–3</div>
+      <div class="mode-stages">
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Planner</div><div class="mode-stage-status run">skippable</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">QA</div><div class="mode-stage-status run">runs</div></div>
+        <div class="mode-stage-row"><div class="mode-dot off"></div><div class="mode-stage-name">DB Architect</div><div class="mode-stage-status">skipped</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Backend Dev</div><div class="mode-stage-status run">runs</div></div>
+        <div class="mode-stage-row"><div class="mode-dot off"></div><div class="mode-stage-name">Frontend Dev</div><div class="mode-stage-status">skipped</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Security</div><div class="mode-stage-status run">runs</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Reviewer</div><div class="mode-stage-status run">runs</div></div>
+        <div class="mode-stage-row"><div class="mode-dot off"></div><div class="mode-stage-name">DevOps</div><div class="mode-stage-status">skipped</div></div>
+      </div>
+    </div>
+    <div class="mode-card featured">
+      <div class="mode-name" style="color:var(--qa);">standard</div>
+      <div class="mode-cost">~$0.68</div>
+      <div class="mode-range">~$0.50 – $1.50 · complexity 5–6</div>
+      <div class="mode-stages">
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Planner</div><div class="mode-stage-status run">runs</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">QA</div><div class="mode-stage-status run">runs</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">DB Architect</div><div class="mode-stage-status run">conditional</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Backend Dev</div><div class="mode-stage-status run">runs</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Frontend Dev</div><div class="mode-stage-status run">conditional</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Security</div><div class="mode-stage-status run">always</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Reviewer</div><div class="mode-stage-status run">always</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">DevOps</div><div class="mode-stage-status run">conditional</div></div>
+      </div>
+    </div>
+    <div class="mode-card">
+      <div class="mode-name" style="color:var(--security);">serious</div>
+      <div class="mode-cost">~$1–3</div>
+      <div class="mode-range">varies with retries · complexity 8–10</div>
+      <div class="mode-stages">
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">All 9 agents</div><div class="mode-stage-status run">run</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Memory — RAG</div><div class="mode-stage-status run">mandatory every stage</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Debugger rounds</div><div class="mode-stage-status run">up to 3</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Security re-scans</div><div class="mode-stage-status run">up to 3</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Review rounds</div><div class="mode-stage-status run">up to 3</div></div>
+        <div class="mode-stage-row"><div class="mode-dot on"></div><div class="mode-stage-name">Full variant analysis</div><div class="mode-stage-status run">all CRITICAL</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- DECISION TABLE -->
+<div class="sect">
+  <div class="eyebrow">Architecture decisions</div>
+  <h2 class="section-title">Why this order.<br>Why these constraints.</h2>
+  <p class="section-sub">Every pipeline decision was evaluated against alternatives. These aren't arbitrary — each has a specific consequence if changed.</p>
+
+  <table class="decision-table">
+    <thead>
+      <tr>
+        <th>Decision</th>
+        <th>Alternative evaluated</th>
+        <th>Why this option</th>
+        <th>Consequence if changed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sequential pipeline</td>
+        <td>Backend + Frontend in parallel</td>
+        <td>API is the contract — Frontend can only build against a finished Backend</td>
+        <td>API mismatches. Frontend builds 5 fields, Backend implements 7. Discovered at integration.</td>
+      </tr>
+      <tr>
+        <td>QA before Dev (TDD)</td>
+        <td>QA after Dev (test-after)</td>
+        <td>Test IS the specification — it defines expected behavior, not validates existing code</td>
+        <td>Tests become rubber-stamps. They confirm what was already written instead of discovering bugs.</td>
+      </tr>
+      <tr>
+        <td>Security + Reviewer at end</td>
+        <td>Security parallel with Dev</td>
+        <td>Can't audit partial code — auth might be added later, components interact in ways not visible mid-build</td>
+        <td>False positives (blocking on issues Dev was going to fix) and false negatives (can't see cross-layer interactions).</td>
+      </tr>
+      <tr>
+        <td>9 specialized agents</td>
+        <td>1 general agent sequentially</td>
+        <td>Observability — when a test fails, you know exactly which stage to look at</td>
+        <td>Failure diagnosis becomes archaeology. A DBA who writes routers bypasses Security review.</td>
+      </tr>
+      <tr>
+        <td>tdd-guard mechanical block</td>
+        <td>Advisory rule in agent prompt</td>
+        <td>Prompts can be ignored. Exit code 2 cannot.</td>
+        <td>TDD becomes optional. Backend Dev skips tests when rushed. Quality collapses silently.</td>
+      </tr>
+      <tr>
+        <td>Taskmaster per-agent tasks</td>
+        <td>Pass full PRD to every agent</td>
+        <td>Each agent reads ~50 tokens for its task vs ~2000 for the full PRD</td>
+        <td>~12K extra tokens per pipeline. No improvement in agent behavior — they only need their slice.</td>
+      </tr>
+      <tr>
+        <td>Thinking model for Planner/Security/Reviewer</td>
+        <td>Sonnet for all agents</td>
+        <td>Planning, security auditing, and code reviewing need deep reasoning</td>
+        <td>Planner misses architectural edge cases. Security produces surface-level audits. Reviewer approves bugs.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- REAL PIPELINE RUN -->
+<div class="sect">
+  <div class="eyebrow">Real output</div>
+  <h2 class="section-title">What a pipeline run<br>actually looks like.</h2>
+  <p class="section-sub">From a real Django project — "add overdue loans endpoint". Full pipeline, standard mode.</p>
+
+  <div style="max-width:700px;margin:40px auto 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;font-family:'DM Mono',monospace;font-size:12px;line-height:2;">
+    <span style="color:var(--text3);">$ tasuki progress</span><br>
+    <span style="color:var(--text);font-weight:600;">Pipeline: add overdue loans endpoint</span><br>
+    <span style="color:var(--qa);">████████████████████░ 89% (8/9)</span><br>
+    <span style="color:var(--text3);">Mode: standard | Status: running</span><br>
+    <br>
+    <span style="color:var(--text3);">Stages:</span><br>
+    <span style="color:var(--reviewer);">&nbsp;&nbsp;✓</span> <span style="color:var(--text2);">Planner (done) — 02:25:49</span><br>
+    <span style="color:var(--reviewer);">&nbsp;&nbsp;✓</span> <span style="color:var(--text2);">QA (done) — 02:25:55</span><br>
+    <span style="color:var(--reviewer);">&nbsp;&nbsp;✓</span> <span style="color:var(--text2);">DB-Architect (done) — 02:26:10</span><br>
+    <span style="color:var(--reviewer);">&nbsp;&nbsp;✓</span> <span style="color:var(--text2);">Backend-Dev (done) — 02:26:45</span><br>
+    <span style="color:var(--reviewer);">&nbsp;&nbsp;✓</span> <span style="color:var(--text2);">Test Checkpoint — all pass</span><br>
+    <span style="color:var(--reviewer);">&nbsp;&nbsp;✓</span> <span style="color:var(--text2);">Security (done) — 02:27:30</span><br>
+    <span style="color:var(--reviewer);">&nbsp;&nbsp;✓</span> <span style="color:var(--text2);">Reviewer — APPROVED</span><br>
+    <span style="color:var(--qa);">&nbsp;&nbsp;→</span> <span style="color:var(--text);">Completion (running)</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:700px;margin:24px auto 0;">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--text);">7</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">stages executed</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--text);">14</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">tests written</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--reviewer);">0</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">security findings</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--reviewer);">~$0.68</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">total cost</div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- FAQ -->
+<div class="sect">
+  <div class="eyebrow">Common questions</div>
+  <h2 class="section-title">Pipeline FAQ</h2>
+
+  <div class="faq-list" style="max-width:700px;margin:40px auto 0;">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Why sequential and not parallel?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Because each stage consumes the output of the previous one. Backend Dev imports models that DBA created. Frontend calls endpoints that Backend built. Security audits code that exists. Running in parallel causes import errors, API mismatches, and incomplete audits. The order isn't arbitrary — it's dependency-driven.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I skip stages?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes — stages skip automatically when they're not needed. A bug fix doesn't trigger DB Architect or Frontend Dev. <code>tasuki mode fast</code> skips Planner for simple tasks. The capability-based routing decides which agents run based on the task description. Security and Reviewer always run — those are non-negotiable.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What happens if a stage fails?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">At test checkpoints, if tests fail → the Debugger activates (Stage 5.5). It diagnoses the root cause in max 5 steps, delegates the fix to the right agent, and re-runs tests. If it still fails after 3 rounds, it escalates to you. The pipeline never silently continues with failing tests.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What if the session ends mid-pipeline?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">The pipeline resumes from where it stopped. Each stage updates <code>tasuki-plans/{feature}/status.md</code> with checkboxes. When you say "continue" in a new session, the AI reads the status file, sees which stages are marked <code>[x]</code>, and continues from the first <code>[ ]</code>.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I add my own agents to the pipeline?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes. Create a <code>.md</code> file in <code>.tasuki/agents/</code> with frontmatter (domains, triggers, priority, activation). Run <code>tasuki discover</code> — it auto-registers in the capability map. The Planner will route tasks to your custom agent when its domains match. See <a href="https://github.com/ForeroAlexander/Tasuki/blob/main/CONTRIBUTING.md" target="_blank" style="color:var(--text);">CONTRIBUTING.md</a> for the format.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Does the pipeline work with Cursor / Copilot / other tools?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes, with different levels. Claude Code gets automatic pipeline execution via <code>Agent()</code> sub-agents + mechanical hooks. Other tools get role-switching — the AI follows instructions in order but can't enforce hooks mechanically. The pipeline still runs, but TDD guard becomes advisory instead of blocking. Run <code>tasuki onboard . --target=cursor</code> to generate for your tool.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Why does the Reviewer have a 3-round limit?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Without it, review loops can go infinite — the Reviewer finds an issue, Dev fixes it, the fix introduces a new issue, Reviewer catches it, Dev fixes that... The 3-round limit forces escalation to you. In practice, 95% of issues are resolved in round 1. Round 3 means something architectural is wrong and needs human judgment.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What's the difference between Debugger, Doctor, and Reviewer?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a"><strong>Debugger</strong> activates during a pipeline when tests fail — it diagnoses root causes and delegates fixes. <strong>Reviewer</strong> runs at the end to gate quality — it approves or requests changes. <strong>Doctor</strong> is a CLI command (<code>tasuki doctor</code>) that checks your Tasuki installation health outside of any pipeline — missing files, stale configs, broken hooks.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2 class="cta-title">See it run on<br>your project.</h2>
+  <p class="cta-sub">10 seconds to onboard. Your AI assistant becomes a team.</p>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div class="cta-install" onclick="copyCmd(this)">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
+      npm install -g tasuki
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </div>
+    <div class="cta-hint" id="copy-hint">click to copy</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <svg width="18" height="18" viewBox="0 0 92 84" fill="none" style="opacity:0.5">
+      <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" opacity="0.55"/>
+      <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.46"/>
+      <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444"  stroke-width="1.2" opacity="0.56"/>
+      <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80"  stroke-width="1.2" opacity="0.5"/>
+      <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>
+      <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>
+      <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>
+      <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>
+      <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>
+      <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>
+      <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>
+      <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>
+      <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>
+    </svg>
+    © 2026 Tasuki · MIT License
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/ForeroAlexander/Tasuki" target="_blank">GitHub</a>
+    <a href="index.html">Home</a>
+    <a href="memory.html">Memory</a>
+    <a href="cli.html">CLI</a>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory — Tasuki</title>
+<meta name="description" content="Tasuki's two-layer memory architecture: wikilink knowledge graph + local vector search. Smarter than RAG, lighter than a database.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="26" height="26" viewBox="0 0 92 84" fill="none">
+      <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" opacity="0.55"/>
+      <line x1="18" y1="12" x2="14" y2="44"  stroke="#D8D4CC" stroke-width="1.2" opacity="0.25"/>
+      <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="52" y1="8"  x2="62" y2="48"  stroke="#F5E642"  stroke-width="1.2" opacity="0.42"/>
+      <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="14" y2="44"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.22"/>
+      <line x1="38" y1="58" x2="14" y2="44"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.32"/>
+      <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.46"/>
+      <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444"  stroke-width="1.2" opacity="0.56"/>
+      <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="62" y1="48" x2="76" y2="60"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.2"/>
+      <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>
+      <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>
+      <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>
+      <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>
+      <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>
+      <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>
+      <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>
+      <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>
+      <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>
+    </svg>
+    <span class="nav-wordmark">tasuki</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="pipeline.html">Pipeline</a></li>
+    <li><a href="memory.html" class="active">Memory</a></li>
+    <li><a href="cli.html">CLI</a></li>
+    <li><a href="index.html#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="https://github.com/ForeroAlexander/Tasuki" class="btn btn-ghost" target="_blank">GitHub</a>
+    <a href="index.html#install" class="btn btn-white">Install free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-grid"></div>
+  <div class="page-hero-eyebrow">Memory Architecture</div>
+  <h1 class="page-hero-title">Not a RAG.<br>Something lighter.</h1>
+  <p class="page-hero-sub">Two layers of persistent memory: a knowledge graph powered by wikilinks, and on-demand vector search over your codebase. Both run locally. No server. No embeddings pipeline.</p>
+</div>
+
+<!-- RAG COMPARISON -->
+<div class="sect">
+  <div class="eyebrow">The problem with RAG</div>
+  <h2 class="section-title">RAG is optimized<br>for millions of docs.</h2>
+  <p class="section-sub">You have tens of notes, not millions. Vector databases are overkill — and they hide what your agents actually know.</p>
+
+  <div class="memory-compare">
+    <div class="mem-card">
+      <div class="mem-card-label" style="color:var(--text3);">Traditional RAG</div>
+      <div style="font-size:14px;color:var(--text2);line-height:2;margin-bottom:20px;">
+        Code → Chunking → Embeddings → Vector DB<br>
+        → Similarity search → Retrieved chunks<br>
+        → LLM query → answer
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text3);">
+          <span style="color:var(--security);font-size:15px;">✗</span> Requires: server, embeddings API, vector DB
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text3);">
+          <span style="color:var(--security);font-size:15px;">✗</span> Black box — you can't read what it retrieved
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text3);">
+          <span style="color:var(--security);font-size:15px;">✗</span> Cost per query — embedding every note
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text3);">
+          <span style="color:var(--security);font-size:15px;">✗</span> All agents retrieve the same pool of knowledge
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text3);">
+          <span style="color:var(--security);font-size:15px;">✗</span> Chunks lose context of surrounding file
+        </div>
+      </div>
+    </div>
+    <div class="mem-card featured">
+      <div class="mem-card-label" style="color:var(--reviewer);">Tasuki Memory</div>
+      <div style="font-size:14px;color:var(--text2);line-height:2;margin-bottom:20px;">
+        Agent acts → learns → writes <code>.md</code> node<br>
+        → <code>[[wikilinks]]</code> connect knowledge<br>
+        → next run → grep for <code>[[this-agent]]</code>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);">
+          <span style="color:var(--reviewer);font-size:15px;">✓</span> $0 · offline · human-readable markdown
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);">
+          <span style="color:var(--reviewer);font-size:15px;">✓</span> Transparent — open any file in Obsidian
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);">
+          <span style="color:var(--reviewer);font-size:15px;">✓</span> Agent-specific filtering: ~72 tokens vs 5000
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);">
+          <span style="color:var(--reviewer);font-size:15px;">✓</span> Full file context — no chunking artifacts
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);">
+          <span style="color:var(--reviewer);font-size:15px;">✓</span> Layer 2 available for deep codebase queries
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- LAYER 1 -->
+<div class="sect">
+  <div class="eyebrow">Layer 1</div>
+  <h2 class="section-title">Wikilink<br>knowledge graph.</h2>
+  <p class="section-sub">Each memory is a node. Each <code>[[wikilink]]</code> is an edge. Agents read only what's linked to them — 18 entries (~72 tokens) instead of everything (~5000 tokens).</p>
+
+  <!-- D3 GRAPH -->
+  <div class="d3-graph-container" id="memory-graph">
+    <div class="d3-graph-label">Knowledge Graph — hover to explore · click to highlight</div>
+    <div class="d3-tooltip" id="graph-tooltip"></div>
+    <div class="d3-legend">
+      <div class="d3-legend-item"><div class="d3-legend-dot" style="background:#D8D4CC;"></div>Agent</div>
+      <div class="d3-legend-item"><div class="d3-legend-dot" style="background:#4ADE80;"></div>Heuristic</div>
+      <div class="d3-legend-item"><div class="d3-legend-dot" style="background:#F5E642;"></div>Bug</div>
+      <div class="d3-legend-item"><div class="d3-legend-dot" style="background:#4A9EFF;"></div>Decision</div>
+      <div class="d3-legend-item"><div class="d3-legend-dot" style="background:#FF8C2B;"></div>Error</div>
+      <div class="d3-legend-item"><div class="d3-legend-dot" style="background:#A0A8B0;"></div>Tool/Stack</div>
+    </div>
+  </div>
+
+  <!-- MEMORY LAYERS -->
+  <div class="memory-layers">
+    <div class="layer-card">
+      <div class="layer-title"><div class="layer-dot" style="background:var(--reviewer);"></div>Layer 1 — Wikilinks (always on)</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;">
+        Individual <code>.md</code> files in <code>memory-vault/</code>. Each references agents with <code>[[wikilinks]]</code>. Before each task, agents grep for their own name and load only those files.
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.9;">
+        <span style="color:var(--text3);"># Before You Act (MANDATORY)</span><br>
+        <span style="color:var(--text2);">grep [[backend-dev]] heuristics/</span><br>
+        <span style="color:var(--text2);">grep [[backend-dev]] errors/</span><br>
+        <span style="color:var(--text2);">grep related-keyword bugs/</span><br>
+        <span style="color:var(--text3);">↓</span><br>
+        <span style="color:var(--reviewer);">18 entries · ~72 tokens · $0</span>
+      </div>
+    </div>
+    <div class="layer-card">
+      <div class="layer-title"><div class="layer-dot" style="background:var(--backend);"></div>Layer 2 — Deep Memory (on demand)</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;">
+        Vector search over schema, APIs, migration history, PRDs, git log. Agents query it by semantic intent when they need historical context beyond their personal notes.
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.9;">
+        <span style="color:var(--text3);"># vault query</span><br>
+        <span style="color:var(--text2);">tasuki vault query "how do we handle auth"</span><br>
+        <span style="color:var(--text3);">↓</span><br>
+        <span style="color:var(--text2);">→ models/user.py (score: 0.94)</span><br>
+        <span style="color:var(--text2);">→ routers/auth.py (score: 0.91)</span><br>
+        <span style="color:var(--text2);">→ plans/jwt-auth/prd.md (0.87)</span><br>
+        <span style="color:var(--backend);">50ms · local SQLite · no API</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- LAYER 2 IN DEPTH -->
+<div class="sect">
+  <div class="eyebrow">Layer 2 in depth</div>
+  <h2 class="section-title">Yes, we use RAG.<br>But differently.</h2>
+  <p class="section-sub">Layer 1 (wikilinks) is the fast index — always loaded, zero cost. Layer 2 uses a real vector store via MCP, but only when the agent needs deep context. The key difference: <strong>you choose the backend, not us</strong>.</p>
+
+  <!-- What Layer 2 indexes -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:800px;margin:40px auto 0;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--dbarch);margin-bottom:10px;">SCHEMA</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Models, migrations, tables, columns, relations. Your entire database structure indexed and searchable by meaning.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--qa);margin-bottom:10px;">API</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Views, routes, serializers, controllers. Every endpoint with its code, auth requirements, and request/response types.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--planner);margin-bottom:10px;">PLANS</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">PRDs, implementation plans, architectural decisions from past pipeline runs. The Planner doesn't repeat what was already designed.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--reviewer);margin-bottom:10px;">MEMORIES</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Heuristics, bugs, lessons, errors — the same nodes from Layer 1 but with full content (not just the 4-line summary).</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:10px;">GIT</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Recent commits and diffs. "What changed last time we touched auth?" — answered without running <code>git log</code>.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:10px;">CONFIG</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Docker, settings, package.json, pyproject.toml. Infrastructure context without reading each file.</div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div style="max-width:800px;margin:40px auto 0;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">How Layer 2 works</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg) 0 0 var(--radius-lg);padding:24px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">1</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Sync</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;"><code>tasuki vault sync</code> indexes your entire project into the vector store. Runs automatically on onboard and when agents write new memories.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">2</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Query</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;">Agent asks: <em>"how do we handle payments?"</em> The MCP searches by semantic similarity and returns full context — schema, code, plans, incidents.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:0 var(--radius-lg) var(--radius-lg) 0;padding:24px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">3</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Swap</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;">Outgrow SQLite? Change one line in <code>.mcp.json</code>. Replace <code>rag-memory-mcp</code> with Qdrant or pgvector. The agent query stays the same.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The swap -->
+  <div style="max-width:800px;margin:32px auto 0;">
+    <div class="info-box">
+      <strong>The agent is backend-agnostic.</strong> Whether you're on Scale 0 (files only) or Scale 3 (pgvector in production), the agent runs the exact same query. The MCP abstraction means you never touch agent prompts when scaling. This is the adoption argument: start with zero infra, grow when you need to.
+    </div>
+  </div>
+
+  <!-- .mcp.json swap example -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;margin:24px auto 0;">
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--reviewer);margin-bottom:10px;">Default — local SQLite ($0)</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);line-height:1.8;">
+        <span style="color:var(--text3);">"rag-memory"</span>: {<br>
+        &nbsp;&nbsp;<span style="color:var(--text3);">"command"</span>: <span style="color:var(--reviewer);">"npx"</span>,<br>
+        &nbsp;&nbsp;<span style="color:var(--text3);">"args"</span>: [<span style="color:var(--reviewer);">"rag-memory-mcp"</span>]<br>
+        }
+      </div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--dbarch);margin-bottom:10px;">Scale 2 — Qdrant (same query, different backend)</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);line-height:1.8;">
+        <span style="color:var(--text3);">"rag-memory"</span>: {<br>
+        &nbsp;&nbsp;<span style="color:var(--text3);">"command"</span>: <span style="color:var(--dbarch);">"npx"</span>,<br>
+        &nbsp;&nbsp;<span style="color:var(--text3);">"args"</span>: [<span style="color:var(--dbarch);">"qdrant-mcp"</span>]<br>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- VAULT STRUCTURE -->
+<div class="sect">
+  <div class="eyebrow">Knowledge graph structure</div>
+  <h2 class="section-title">Every node has<br>a type and purpose.</h2>
+  <p class="section-sub">The vault is auto-initialized during <code>tasuki onboard</code>. Agents write to it when they learn something non-obvious. You can open it in Obsidian.</p>
+
+  <div class="vault-tree">
+    <div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;margin-bottom:16px;color:var(--text);">memory-vault/ structure</div>
+<span class="vt-dir">memory-vault/</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-file">index.md</span>                 <span class="vt-comment">  ← graph index · recent activity</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-dir">agents/</span>                  <span class="vt-comment">  ← auto-generated from installed agents</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-file">backend-dev.md</span>           <span class="vt-link">  → [[fastapi]] [[postgres]] [[jwt]]</span><br>
+<span style="color:var(--text3);">│   └── </span><span class="vt-file">security.md</span>              <span class="vt-link">  → [[semgrep-mcp]] [[owasp]]</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-dir">heuristics/</span>              <span class="vt-comment">  ← PERMANENT rules (never expires)</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-file">always-index-lookups.md</span>  <span class="vt-link">  → [[db-architect]] [[backend-dev]] [[reviewer]]</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-file">parameterized-queries.md</span> <span class="vt-link">  → [[backend-dev]] [[security]]</span><br>
+<span style="color:var(--text3);">│   └── </span><span class="vt-file">tests-before-code.md</span>     <span class="vt-link">  → [[qa]] [[backend-dev]] [[reviewer]]</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-dir">bugs/</span>                    <span class="vt-comment">  ← EPISODIC: specific incidents</span><br>
+<span style="color:var(--text3);">│   └── </span><span class="vt-file">advisory-lock-bug.md</span>     <span class="vt-link">  → [[db-architect]] [[backend-dev]]</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-dir">errors/</span>                  <span class="vt-comment">  ← "DO NOT" entries · appear in project-facts</span><br>
+<span style="color:var(--text3);">│   └── </span><span class="vt-file">used-print-not-logger.md</span> <span class="vt-link">  → [[backend-dev]]</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-dir">decisions/</span>               <span class="vt-comment">  ← architectural decisions with alternatives</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-dir">tools/</span>                   <span class="vt-comment">  ← MCP server nodes (auto-generated)</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-file">sentry-mcp.md</span>            <span class="vt-link">  → [[debugger]] [[devops]]</span><br>
+<span style="color:var(--text3);">│   └── </span><span class="vt-file">postgres-mcp.md</span>          <span class="vt-link">  → [[db-architect]] [[debugger]]</span><br>
+<span style="color:var(--text3);">└── </span><span class="vt-dir">stack/</span>                   <span class="vt-comment">  ← technology nodes (auto-generated)</span><br>
+<span style="color:var(--text3);">    └── </span><span class="vt-file">fastapi.md</span>               <span class="vt-link">  → [[backend-dev]] [[qa]] [[security]]</span>
+  </div>
+
+  <!-- 4D FORMAT -->
+  <div style="margin-top:48px;">
+    <div class="eyebrow" style="margin-bottom:16px;">4-dimension entry format</div>
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;font-family:'DM Mono',monospace;font-size:12px;line-height:2;">
+      <span style="color:var(--qa);">## 2026-03-14 — advisory_lock doesn't rollback on exception</span><br>
+      <span style="color:var(--text3);">**Pattern**:</span> <span style="color:var(--text2);">advisory_lock context manager in asyncpg does NOT auto-rollback if an exception</span><br>
+      <span style="color:var(--text3);">           </span> <span style="color:var(--text2);">is raised inside the block. Must explicitly handle in finally clause.</span><br>
+      <span style="color:var(--text3);">**Evidence**:</span> <span style="color:var(--text2);">`app/services/payment.py:47` — lock held after IntegrityError, blocking retries</span><br>
+      <span style="color:var(--text3);">**Scope**:</span>   <span style="color:var(--text2);">All advisory_lock usages in services/. Applies to any asyncpg lock context.</span><br>
+      <span style="color:var(--text3);">**Prevention**:</span> <span style="color:var(--text2);">grep for `advisory_lock` without `finally: await conn.execute("SELECT pg_advisory_unlock")`</span><br>
+      <br>
+      <span style="color:var(--text3);">tags: </span><span style="color:var(--backend);">[[backend-dev]]</span> <span style="color:var(--dbarch);">[[db-architect]]</span> <span style="color:var(--text3);">[[asyncpg]] [[postgres]]</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--qa);margin-bottom:8px;">PATTERN</div>
+        <div style="font-size:12px;color:var(--text2);">Reusable knowledge, not the symptom</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--backend);margin-bottom:8px;">EVIDENCE</div>
+        <div style="font-size:12px;color:var(--text2);">Proof it's real — file:line observed</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--frontend);margin-bottom:8px;">SCOPE</div>
+        <div style="font-size:12px;color:var(--text2);">Where else this applies</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--reviewer);margin-bottom:8px;">PREVENTION</div>
+        <div style="font-size:12px;color:var(--text2);">Grep pattern or rule to catch next time</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- HOW MEMORY CONNECTS TO PIPELINE -->
+<div class="sect">
+  <div class="eyebrow">The closed loop</div>
+  <h2 class="section-title">Memory connects<br>to every stage.</h2>
+  <p class="section-sub">Memory isn't decorative — it's a feedback loop. Each pipeline run reads from the vault, and Stage 9 writes back.</p>
+
+  <div class="flow-diagram">
+    <div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;margin-bottom:16px;color:var(--text);">Memory flow — "add payment endpoint"</div>
+    <span style="color:var(--text2);">Task: "add payment endpoint"</span><br>
+    <span style="color:var(--text3);">     ↓</span><br>
+    <span style="color:var(--planner);">[Planner]</span> <span style="color:var(--text3);">reads</span> <span style="color:var(--text2);">[[websocket-vs-sse]]</span> <span style="color:var(--text3);">→ knows past architecture decisions</span><br>
+    <span style="color:var(--text3);">     ↓</span><br>
+    <span style="color:var(--qa);">[QA]</span> <span style="color:var(--text3);">reads</span> <span style="color:var(--text2);">[[parameterized-queries]]</span> <span style="color:var(--text3);">→ writes SQL injection tests first</span><br>
+    <span style="color:var(--text3);">     ↓</span><br>
+    <span style="color:var(--backend);">[Backend]</span> <span style="color:var(--text3);">reads</span> <span style="color:var(--text2);">[[used-print-not-logger]]</span> <span style="color:var(--text3);">→ uses structured logging</span><br>
+    <span style="color:var(--text3);">             </span><span style="color:var(--backend);">queries RAG:</span> <span style="color:var(--text3);">"payments?" → full schema + past PRDs</span><br>
+    <span style="color:var(--text3);">     ↓</span><br>
+    <span style="color:var(--security);">[Security]</span> <span style="color:var(--text3);">reads</span> <span style="color:var(--text2);">[[advisory-lock-bug]]</span> <span style="color:var(--text3);">→ checks for transaction safety</span><br>
+    <span style="color:var(--text3);">     ↓</span><br>
+    <span style="color:var(--reviewer);">[Stage 9]</span> <span style="color:var(--text3);">writes</span> <span style="color:var(--text2);">payment-idempotency.md</span> <span style="color:var(--text3);">→ tagged [[backend-dev]] [[planner]]</span><br>
+    <span style="color:var(--text3);">     ↓</span><br>
+    <span style="color:var(--reviewer);">Next task starts with this knowledge loaded.</span>
+  </div>
+
+  <!-- 6 CONNECTION POINTS -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--reviewer);margin-bottom:10px;">CONNECTION 1</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Before You Act</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Every agent grepping for <code>[[its-name]]</code> before any task. Loads ~18 entries (~72 tokens) — not 200.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--reviewer);margin-bottom:10px;">CONNECTION 2</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Stage 9 Writes</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">After Reviewer APPROVES, Stage 9 writes to vault — only if non-obvious insight, not after every task.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--reviewer);margin-bottom:10px;">CONNECTION 3</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Error Memory</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;"><code>tasuki error "used print() not logger"</code> → creates node AND appears in <code>project-facts.md</code> "Do NOT" section.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--backend);margin-bottom:10px;">CONNECTION 4</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Project Facts</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Anti-hallucination file auto-generated from real imports. Versions from package files, paths from <code>ls</code>. Not guessed.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--backend);margin-bottom:10px;">CONNECTION 5</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Project Context</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Business understanding from the onboard interview — read only by Planner. Other agents get business context through Taskmaster tasks (~500 tokens saved per agent).</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--backend);margin-bottom:10px;">CONNECTION 6</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Capability Map</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Auto-generated from agent frontmatter. Planner reads this to route tasks by domain, not by name. Adding a new agent auto-updates the map.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ANTI-BLOAT + GROWTH -->
+<div class="sect">
+  <div class="eyebrow">Design constraints</div>
+  <h2 class="section-title">20-entry limit.<br>Not a bug.</h2>
+  <p class="section-sub">Without the cap, 6 months of active use would give each agent 200+ entries. Context fills with noise. Valuable insights get buried.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px;">
+    <div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:16px;">Anti-bloat rules</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--qa);margin-bottom:6px;">MAX 20 ENTRIES PER AGENT</div>
+          <div style="font-size:13px;color:var(--text2);">When full, remove the oldest LOW-value entry. Signal-to-noise stays high forever.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--qa);margin-bottom:6px;">TRIGGER CONDITIONS</div>
+          <div style="font-size:13px;color:var(--text2);">Only write when: root cause was non-obvious, fix caused regression, new pattern discovered, security finding was new. Not after every task.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--qa);margin-bottom:6px;">NO DUPLICATION</div>
+          <div style="font-size:13px;color:var(--text2);">If info is already in the agent's prompt or TASUKI.md, don't repeat in memory. One entry per insight.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--qa);margin-bottom:6px;">PROMOTION PROTOCOL</div>
+          <div style="font-size:13px;color:var(--text2);">Same pattern appears 2+ times in bugs/lessons → create a permanent heuristic. The insight graduates to a rule.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:16px;">Growth path — scale without changing agents</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;">
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;font-size:12px;">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;">Scale</div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;">Backend</div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;">Use when</div>
+
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--text3);">0</div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);">Wikilinks only</div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text3);">Offline, no infra</div>
+
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--reviewer);">1</div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);">rag-memory-mcp</div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--reviewer);">Default — local SQLite</div>
+
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--text3);">2</div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);">Qdrant MCP</div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text3);">Team / high volume</div>
+
+          <div style="padding:10px 14px;font-family:'DM Mono',monospace;color:var(--text3);">3</div>
+          <div style="padding:10px 14px;color:var(--text);">pgvector</div>
+          <div style="padding:10px 14px;color:var(--text3);">Production / multi-team</div>
+        </div>
+      </div>
+      <div class="info-box">
+        <strong>The agent query never changes.</strong> Whether you're on Scale 0 or Scale 3, the agent runs the same query. Only the MCP backend changes. No agent prompt updates needed.
+      </div>
+
+      <div style="margin-top:20px;">
+        <div style="font-size:14px;font-weight:600;margin-bottom:12px;">Memory by mode</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--reviewer);margin-bottom:6px;">fast</div>
+            <div style="font-size:12px;color:var(--text2);">Wikilinks only</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">No RAG queries</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:14px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--qa);margin-bottom:6px;">standard</div>
+            <div style="font-size:12px;color:var(--text2);">Wikilinks + RAG</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">When needed</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:14px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--security);margin-bottom:6px;">serious</div>
+            <div style="font-size:12px;color:var(--text);">Wikilinks + RAG</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">Mandatory every stage</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- DECISION TABLE -->
+<div class="sect">
+  <div class="eyebrow">Why not just RAG?</div>
+  <h2 class="section-title">The decisions<br>behind the design.</h2>
+
+  <table class="decision-table">
+    <thead>
+      <tr>
+        <th>Decision</th>
+        <th>Alternative evaluated</th>
+        <th>Why this option</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Individual .md nodes + wikilinks</td>
+        <td>Single MEMORY.md per agent with appended lines</td>
+        <td>Flat files become noise after 50 entries. Individual nodes are navigable. Compatible with Obsidian.</td>
+      </tr>
+      <tr>
+        <td>Behavioral memory (agent writes it)</td>
+        <td>PostToolUse hook that auto-extracts learnings</td>
+        <td>A shell script can't evaluate significance. "Root cause required 3 investigation rounds" needs LLM reasoning, not regex.</td>
+      </tr>
+      <tr>
+        <td>No RAG/Vector DB by default</td>
+        <td>ChromaDB or Pinecone from the start</td>
+        <td>Grep works for tens of notes. Vector DBs are optimized for millions. Over-engineering creates dependencies and infra costs.</td>
+      </tr>
+      <tr>
+        <td>Max 20 entries per agent</td>
+        <td>Unlimited entries</td>
+        <td>Without the limit, 6 months = 200+ entries per agent. Context fills with noise. The limit forces curation.</td>
+      </tr>
+      <tr>
+        <td>Local SQLite for Layer 2</td>
+        <td>External vector API (OpenAI embeddings)</td>
+        <td>$0, offline, &lt;50ms queries, no API key required. Works in air-gapped environments.</td>
+      </tr>
+      <tr>
+        <td>Agent-specific filtering ([[wikilinks]])</td>
+        <td>Load all memory for every agent</td>
+        <td>Backend Dev doesn't need Frontend Dev's heuristics. Filtering reduces context from ~5000 tokens to ~700 tokens per agent.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- REAL NUMBERS -->
+<div class="sect">
+  <div class="eyebrow">Real data</div>
+  <h2 class="section-title">50 entries. 148 KB.<br>Under 50ms.</h2>
+  <p class="section-sub">Numbers from a real Django + PostgreSQL project after onboarding and one pipeline run.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;margin:40px auto 0;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--reviewer);margin-bottom:16px;">$ tasuki vault sync</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);line-height:2;">
+        Indexing memory vault...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text);">19</span> memories<br>
+        Indexing database schema...&nbsp;&nbsp;&nbsp;<span style="color:var(--text);">8</span> schema files<br>
+        Indexing API endpoints...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text);">13</span> API files<br>
+        Indexing pipeline plans...&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text);">7</span> plan files<br>
+        Indexing recent git history...&nbsp;<span style="color:var(--text);">20</span> commits<br>
+        Indexing config files...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text);">3</span> config files<br>
+        <br>
+        <span style="color:var(--reviewer);">RAG deep memory: 70 entries indexed</span><br>
+        <span style="color:var(--text3);">Database: 148 KB · Query time: &lt;50ms</span>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--backend);margin-bottom:16px;">$ tasuki vault query "authentication"</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);line-height:2;">
+        <span style="color:var(--dbarch);">[schema]</span> authentication models<br>
+        <span style="color:var(--text3);">&nbsp;&nbsp;CustomAPIKey, JWT tokens...</span><br>
+        <span style="color:var(--qa);">[api]</span>&nbsp;&nbsp;&nbsp;&nbsp;authentication views<br>
+        <span style="color:var(--text3);">&nbsp;&nbsp;login, register, logout endpoints...</span><br>
+        <span style="color:var(--qa);">[api]</span>&nbsp;&nbsp;&nbsp;&nbsp;authentication serializers<br>
+        <span style="color:var(--text3);">&nbsp;&nbsp;token validation, password change...</span><br>
+        <span style="color:var(--planner);">[plan]</span>&nbsp;&nbsp;&nbsp;auth-logout-profile<br>
+        <span style="color:var(--text3);">&nbsp;&nbsp;PRD + implementation details</span><br>
+        <br>
+        <span style="color:var(--reviewer);">4 results in 12ms</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:800px;margin:24px auto 0;">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--text);">50+</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">entries indexed</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--text);">148</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">KB database</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--reviewer);">&lt;50</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">ms per query</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--reviewer);">$0</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">infrastructure cost</div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- FAQ -->
+<div class="sect">
+  <div class="eyebrow">Common questions</div>
+  <h2 class="section-title">Memory FAQ</h2>
+
+  <div class="faq-list" style="max-width:700px;margin:40px auto 0;">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I edit memories manually?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes — they're plain <code>.md</code> files. Open <code>memory-vault/</code> in Obsidian or any text editor. Edit, delete, add <code>[[wikilinks]]</code> to connect nodes. The vault is fully human-readable and human-editable.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What happens if I delete a memory file?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">The agent simply won't load that memory next time. No errors, no broken references. The <code>[[wikilink]]</code> becomes a dead link — same as in Obsidian. You can run <code>tasuki vault sync</code> to update the RAG index after deleting.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Does Layer 2 (RAG) need internet?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">No. The default backend (<code>rag-memory-mcp</code>) uses SQLite locally. Everything runs on your machine — no API calls, no cloud, no embeddings service. Works in air-gapped environments.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">How does promotion from episodic to heuristic work?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">When the same pattern appears 2+ times in <code>bugs/</code> or <code>lessons/</code>, the agent creates a permanent entry in <code>heuristics/</code>. The original episodic entries remain for historical context, but the heuristic becomes the canonical rule. Example: two separate SQL injection bugs → one "always use parameterized queries" heuristic.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What happens when an agent hits the 20-entry limit?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">The oldest LOW-value entry is archived (moved out, not deleted). CRITICAL and HIGH entries are never auto-removed. The cap keeps signal-to-noise high — without it, 6 months of use would give each agent 200+ entries and context would fill with noise.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I use my own vector database instead of SQLite?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes. Change the MCP backend in <code>.mcp.json</code>. Replace <code>rag-memory-mcp</code> with <code>qdrant-mcp</code> or <code>pgvector</code>. The agent query never changes — only the backend. See the Growth Path table above for options.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Do all agents share the same memories?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">No. Each agent reads only memories tagged with its <code>[[wikilink]]</code>. Backend Dev reads <code>[[backend-dev]]</code> entries (~18 memories, ~72 tokens). Security reads <code>[[security]]</code> entries. A memory can be tagged with multiple agents if it's relevant to more than one.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">How is this different from Claude's built-in memory?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Claude's memory is per-conversation and resets between sessions. Tasuki's memory is per-project and persists forever. It's also structured (typed nodes with wikilinks) instead of flat notes, agent-specific instead of global, and visible/editable by you instead of hidden inside the model.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2 class="cta-title">Your AI gets smarter<br>with every task.</h2>
+  <p class="cta-sub">Onboard once. The knowledge graph initializes automatically.</p>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div class="cta-install" onclick="copyCmd(this)">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
+      npm install -g tasuki
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </div>
+    <div class="cta-hint" id="copy-hint">click to copy</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <svg width="18" height="18" viewBox="0 0 92 84" fill="none" style="opacity:0.5">
+      <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" opacity="0.55"/>
+      <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.46"/>
+      <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444"  stroke-width="1.2" opacity="0.56"/>
+      <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80"  stroke-width="1.2" opacity="0.5"/>
+      <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>
+      <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>
+      <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>
+      <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>
+      <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>
+      <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>
+      <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>
+      <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>
+      <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>
+    </svg>
+    © 2026 Tasuki · MIT License
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/ForeroAlexander/Tasuki" target="_blank">GitHub</a>
+    <a href="index.html">Home</a>
+    <a href="pipeline.html">Pipeline</a>
+    <a href="cli.html">CLI</a>
+  </div>
+</footer>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+// ── D3 KNOWLEDGE GRAPH ──
+(function() {
+  const container = document.getElementById('memory-graph');
+  if (!container) return;
+
+  const w = container.clientWidth || 800;
+  const h = container.clientHeight || 440;
+
+  const nodes = [
+    // Agents
+    { id: 'planner',     label: 'planner',     type: 'agent',    color: '#D8D4CC', r: 9 },
+    { id: 'qa',          label: 'qa',          type: 'agent',    color: '#F5E642', r: 9 },
+    { id: 'db-architect',label: 'db-architect',type: 'agent',    color: '#4A9EFF', r: 9 },
+    { id: 'backend-dev', label: 'backend-dev', type: 'agent',    color: '#00D4FF', r: 9 },
+    { id: 'frontend-dev',label: 'frontend-dev',type: 'agent',    color: '#FF7B6B', r: 9 },
+    { id: 'debugger',    label: 'debugger',    type: 'agent',    color: '#FF8C2B', r: 9 },
+    { id: 'security',    label: 'security',    type: 'agent',    color: '#FF4444', r: 9 },
+    { id: 'reviewer',    label: 'reviewer',    type: 'agent',    color: '#4ADE80', r: 9 },
+    { id: 'devops',      label: 'devops',      type: 'agent',    color: '#A0A8B0', r: 9 },
+    // Heuristics
+    { id: 'h-params',    label: 'parameterized-queries',  type: 'heuristic', color: '#4ADE80', r: 6 },
+    { id: 'h-tdd',       label: 'tests-before-code',      type: 'heuristic', color: '#4ADE80', r: 6 },
+    { id: 'h-index',     label: 'always-index-lookups',   type: 'heuristic', color: '#4ADE80', r: 6 },
+    { id: 'h-ui-states', label: 'handle-all-ui-states',   type: 'heuristic', color: '#4ADE80', r: 6 },
+    { id: 'h-input',     label: 'never-trust-client-input', type: 'heuristic', color: '#4ADE80', r: 6 },
+    // Bugs
+    { id: 'b-advisory',  label: 'advisory-lock-bug',      type: 'bug',       color: '#F5E642', r: 5 },
+    { id: 'b-migration', label: 'migration-no-downgrade',  type: 'bug',       color: '#F5E642', r: 5 },
+    // Decisions
+    { id: 'd-sequential', label: 'sequential-pipeline',   type: 'decision',  color: '#4A9EFF', r: 5 },
+    { id: 'd-tdd',        label: 'tdd-first',             type: 'decision',  color: '#4A9EFF', r: 5 },
+    // Errors
+    { id: 'e-print',     label: 'used-print-not-logger',  type: 'error',     color: '#FF8C2B', r: 5 },
+    // Tools/Stack
+    { id: 't-sentry',    label: 'sentry-mcp',             type: 'tool',      color: '#A0A8B0', r: 5 },
+    { id: 't-semgrep',   label: 'semgrep-mcp',            type: 'tool',      color: '#A0A8B0', r: 5 },
+    { id: 't-postgres',  label: 'postgres-mcp',           type: 'tool',      color: '#A0A8B0', r: 5 },
+    { id: 's-fastapi',   label: 'fastapi',                type: 'stack',     color: '#A0A8B0', r: 5 },
+  ];
+
+  const links = [
+    { source: 'h-params',    target: 'backend-dev' },
+    { source: 'h-params',    target: 'security' },
+    { source: 'h-params',    target: 'qa' },
+    { source: 'h-tdd',       target: 'qa' },
+    { source: 'h-tdd',       target: 'backend-dev' },
+    { source: 'h-tdd',       target: 'reviewer' },
+    { source: 'h-index',     target: 'db-architect' },
+    { source: 'h-index',     target: 'backend-dev' },
+    { source: 'h-index',     target: 'reviewer' },
+    { source: 'h-ui-states', target: 'frontend-dev' },
+    { source: 'h-ui-states', target: 'reviewer' },
+    { source: 'h-input',     target: 'backend-dev' },
+    { source: 'h-input',     target: 'security' },
+    { source: 'b-advisory',  target: 'db-architect' },
+    { source: 'b-advisory',  target: 'backend-dev' },
+    { source: 'b-migration', target: 'db-architect' },
+    { source: 'b-migration', target: 'devops' },
+    { source: 'd-sequential', target: 'planner' },
+    { source: 'd-tdd',       target: 'planner' },
+    { source: 'd-tdd',       target: 'qa' },
+    { source: 'e-print',     target: 'backend-dev' },
+    { source: 't-sentry',    target: 'debugger' },
+    { source: 't-sentry',    target: 'devops' },
+    { source: 't-semgrep',   target: 'security' },
+    { source: 't-semgrep',   target: 'reviewer' },
+    { source: 't-postgres',  target: 'db-architect' },
+    { source: 't-postgres',  target: 'debugger' },
+    { source: 's-fastapi',   target: 'backend-dev' },
+    { source: 's-fastapi',   target: 'qa' },
+    { source: 's-fastapi',   target: 'security' },
+  ];
+
+  const svg = d3.select('#memory-graph')
+    .append('svg')
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', `0 0 ${w} ${h}`);
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(d => {
+      if (d.source.type === 'agent' && d.target.type === 'agent') return 100;
+      return 60;
+    }).strength(0.4))
+    .force('charge', d3.forceManyBody().strength(-120))
+    .force('center', d3.forceCenter(w / 2, h / 2))
+    .force('collision', d3.forceCollide().radius(d => d.r + 10));
+
+  const link = svg.append('g')
+    .selectAll('line')
+    .data(links)
+    .join('line')
+    .attr('stroke', 'rgba(255,255,255,0.07)')
+    .attr('stroke-width', 1);
+
+  const tooltip = document.getElementById('graph-tooltip');
+
+  const node = svg.append('g')
+    .selectAll('g')
+    .data(nodes)
+    .join('g')
+    .style('cursor', 'pointer')
+    .call(d3.drag()
+      .on('start', (event, d) => { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
+      .on('end', (event, d) => { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
+    )
+    .on('mouseover', (event, d) => {
+      // Highlight connected nodes
+      const connected = new Set([d.id]);
+      links.forEach(l => {
+        if (l.source.id === d.id) connected.add(l.target.id);
+        if (l.target.id === d.id) connected.add(l.source.id);
+      });
+      node.selectAll('circle').attr('opacity', n => connected.has(n.id) ? 1 : 0.2);
+      link.attr('stroke', l => (l.source.id === d.id || l.target.id === d.id) ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.04)')
+          .attr('stroke-width', l => (l.source.id === d.id || l.target.id === d.id) ? 1.5 : 1);
+      // Show tooltip
+      tooltip.style.opacity = '1';
+      tooltip.style.left = (event.offsetX + 12) + 'px';
+      tooltip.style.top = (event.offsetY - 8) + 'px';
+      tooltip.innerHTML = `<span style="color:${d.color}">${d.label}</span> <span style="color:var(--text3);">[${d.type}]</span>`;
+    })
+    .on('mousemove', (event) => {
+      tooltip.style.left = (event.offsetX + 12) + 'px';
+      tooltip.style.top = (event.offsetY - 8) + 'px';
+    })
+    .on('mouseout', () => {
+      node.selectAll('circle').attr('opacity', 0.9);
+      link.attr('stroke', 'rgba(255,255,255,0.07)').attr('stroke-width', 1);
+      tooltip.style.opacity = '0';
+    });
+
+  node.append('circle')
+    .attr('r', d => d.r)
+    .attr('fill', d => d.color)
+    .attr('fill-opacity', d => d.type === 'agent' ? 0.85 : 0.6)
+    .attr('opacity', 0.9);
+
+  node.append('text')
+    .attr('dy', d => d.r + 11)
+    .attr('text-anchor', 'middle')
+    .attr('fill', 'rgba(255,255,255,0.35)')
+    .attr('font-size', 8)
+    .attr('font-family', 'DM Mono, monospace')
+    .text(d => d.type === 'agent' ? d.label : '');
+
+  sim.on('tick', () => {
+    link
+      .attr('x1', d => Math.max(d.source.r, Math.min(w - d.source.r, d.source.x)))
+      .attr('y1', d => Math.max(d.source.r, Math.min(h - d.source.r, d.source.y)))
+      .attr('x2', d => Math.max(d.target.r, Math.min(w - d.target.r, d.target.x)))
+      .attr('y2', d => Math.max(d.target.r, Math.min(h - d.target.r, d.target.y)));
+
+    node.attr('transform', d => `translate(${Math.max(d.r, Math.min(w - d.r, d.x))},${Math.max(d.r, Math.min(h - d.r, d.y))})`);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLI Reference — Tasuki</title>
+<meta name="description" content="Complete Tasuki CLI reference: all 36 commands, 13 stack profiles, 3 hooks, 9 MCP servers, and multi-AI adapter system.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="26" height="26" viewBox="0 0 92 84" fill="none">
+      <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" opacity="0.55"/>
+      <line x1="18" y1="12" x2="14" y2="44"  stroke="#D8D4CC" stroke-width="1.2" opacity="0.25"/>
+      <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="52" y1="8"  x2="62" y2="48"  stroke="#F5E642"  stroke-width="1.2" opacity="0.42"/>
+      <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="14" y2="44"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.22"/>
+      <line x1="38" y1="58" x2="14" y2="44"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.32"/>
+      <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.46"/>
+      <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444"  stroke-width="1.2" opacity="0.56"/>
+      <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="62" y1="48" x2="76" y2="60"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.2"/>
+      <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>
+      <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>
+      <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>
+      <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>
+      <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>
+      <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>
+      <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>
+      <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>
+      <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>
+    </svg>
+    <span class="nav-wordmark">tasuki</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="pipeline.html">Pipeline</a></li>
+    <li><a href="memory.html">Memory</a></li>
+    <li><a href="cli.html" class="active">CLI</a></li>
+    <li><a href="index.html#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="https://github.com/ForeroAlexander/Tasuki" class="btn btn-ghost" target="_blank">GitHub</a>
+    <a href="index.html#install" class="btn btn-white">Install free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-grid"></div>
+  <div class="page-hero-eyebrow">Reference</div>
+  <h1 class="page-hero-title">CLI Reference</h1>
+  <p class="page-hero-sub">36 commands, 13 stack profiles, 3 hooks, 9 MCP servers, 8 AI adapters. Everything you need to configure, extend, and debug Tasuki.</p>
+</div>
+
+<div class="sect">
+
+  <!-- QUICK START -->
+  <div class="terminal-wrap" style="margin-bottom:60px;">
+    <div class="terminal-bar">
+      <div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div>
+      <div class="terminal-title">Quick start</div>
+    </div>
+    <div class="terminal-body">
+      <span class="t-line"><span class="t-p">$</span> <span class="t-cmd">npm install -g tasuki</span></span>
+      <span class="t-line t-dim">  Installed tasuki v1.0.0</span>
+      <span class="t-line">&nbsp;</span>
+      <span class="t-line"><span class="t-p">$</span> <span class="t-cmd">cd your-project</span></span>
+      <span class="t-line"><span class="t-p">$</span> <span class="t-cmd">tasuki onboard .</span></span>
+      <span class="t-line t-dim">  Phase 1: Scanning stack...</span>
+      <span class="t-line t-dim">  ✓ FastAPI detected (from app/main.py)</span>
+      <span class="t-line t-dim">  ✓ PostgreSQL (from requirements.txt: psycopg2)</span>
+      <span class="t-line t-dim">  ✓ React + TypeScript (from package.json)</span>
+      <span class="t-line t-dim">  Phase 2: 13 profiles evaluated → fastapi-react selected</span>
+      <span class="t-line t-dim">  Phase 3: Rendering 9 agents + 3 hooks...</span>
+      <span class="t-line t-dim">  Phase 5: Initializing knowledge graph (15 nodes)...</span>
+      <span class="t-line t-dim">  Phase 7: Generating CLAUDE.md adapter...</span>
+      <span class="t-line t-ok">  ✓ Done in 8s · $0.00 · Talk to Claude Code normally.</span>
+    </div>
+  </div>
+
+  <!-- SETUP COMMANDS -->
+  <div class="cmd-category">
+    <div class="cmd-category-title">Setup &amp; Onboarding</div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki onboard <span class="arg">[path]</span> <span class="flag">[--target=claude|cursor|codex]</span> <span class="flag">[--skip-interview]</span></span>
+        <span class="cmd-brief">scan &amp; configure</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Scans your project with 5 bash detectors (zero API calls, $0), matches to a stack profile, generates <code>.tasuki/</code>, initializes the knowledge graph, and translates to your target AI tool. Takes ~10 seconds.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki onboard . --target=cursor</span><br>
+            <span class="ok">✓ Cursor adapter generated (.cursor/rules/)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki init <span class="flag">[--minimal]</span></span>
+        <span class="cmd-brief">create .tasuki/ structure</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Creates the bare <code>.tasuki/</code> directory structure without scanning. Use when you want to manually configure agents. <code>--minimal</code> creates only essential files.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki doctor</span>
+        <span class="cmd-brief">validate configuration</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Checks all generated files for validity: JSON syntax, no unresolved <code>{{PLACEHOLDERS}}</code>, agent frontmatter parseable, hooks executable, capability map consistent.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki doctor</span><br>
+            <span class="ok">✓ 9 agents valid</span><br>
+            <span class="ok">✓ 3 hooks executable</span><br>
+            <span class="warn">⚠ project-facts.md: 2 unverified paths</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki status</span>
+        <span class="cmd-brief">show current config</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Displays current configuration: active mode, detected stack, installed agents, active hooks, memory vault summary.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki status</span><br>
+            <span class="o">Mode: standard · Target: claude</span><br>
+            <span class="o">Stack: FastAPI + PostgreSQL + React</span><br>
+            <span class="o">Agents: 9 active · Hooks: 3 · Memory: 34 nodes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODE COMMANDS -->
+  <div class="cmd-category">
+    <div class="cmd-category-title">Execution Mode</div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki mode <span class="arg">&lt;fast|standard|serious&gt;</span></span>
+        <span class="cmd-brief">set pipeline depth</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Sets the execution mode written to CLAUDE.md. <strong>fast</strong>: 3 agents, ~$0.26, small bugs. <strong>standard</strong>: 6 agents, ~$0.68, new features. <strong>serious</strong>: all 9 agents, RAG mandatory, full retries.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki mode standard</span><br>
+            <span class="ok">✓ Mode set to standard (6 agents, ~$0.68/task)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTALL COMMANDS -->
+  <div class="cmd-category">
+    <div class="cmd-category-title">Plugin System</div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki install mcp <span class="arg">&lt;name&gt;</span></span>
+        <span class="cmd-brief">add MCP server</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Installs an MCP server and wires it into the appropriate pipeline stages and agents. Shows you exactly which stages and agents the MCP connects to before confirming.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki install mcp playwright</span><br>
+            <span class="o">→ Stage 2 (QA E2E testing)</span><br>
+            <span class="o">→ Stage 5 (Frontend visual regression)</span><br>
+            <span class="o">→ Agents: qa, frontend-dev</span><br>
+            <span class="ok">✓ Installed. Add to CLAUDE.md MCP list to activate.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki install agent <span class="arg">&lt;name&gt;</span> <span class="flag">[--from=url]</span></span>
+        <span class="cmd-brief">add custom agent</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Installs a custom agent into <code>.tasuki/agents/</code> and regenerates the capability map. The Planner will automatically see and route tasks to the new agent on the next pipeline run.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki install agent mobile-dev</span><br>
+            <span class="ok">✓ Agent installed · capability-map.yaml updated</span><br>
+            <span class="o">Planner will now route mobile tasks to mobile-dev</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki install skill <span class="arg">&lt;name&gt;</span></span>
+        <span class="cmd-brief">add skill / slash command</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Installs a skill into <code>.tasuki/skills/</code> and exposes it as a <code>/command</code> in your AI tool. Skills can be auto-triggered in specific pipeline stages or invoked manually.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki adapt <span class="arg">&lt;claude|cursor|codex|copilot|windsurf|continue|roo|gemini&gt;</span></span>
+        <span class="cmd-brief">generate AI tool config</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Translates <code>.tasuki/</code> to the target AI tool's format. Can be run after onboarding to add support for a second tool, or after any agent/rule changes.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki adapt cursor</span><br>
+            <span class="ok">✓ .cursor/rules/ generated (9 agent rules)</span><br>
+            <span class="ok">✓ .cursor/mcp.json updated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VAULT COMMANDS -->
+  <div class="cmd-category">
+    <div class="cmd-category-title">Memory Vault</div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault sync</span>
+        <span class="cmd-brief">sync vault to SQLite index</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Reads all files in <code>memory-vault/</code>, parses wikilinks, indexes content into local SQLite for vector search. Run after manually editing vault files.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki vault sync</span><br>
+            <span class="o">Indexed 34 nodes · 128 edges · 2.3s</span><br>
+            <span class="ok">✓ SQLite index updated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault query <span class="arg">"&lt;query&gt;"</span> <span class="flag">[--agent=name]</span></span>
+        <span class="cmd-brief">semantic search the vault</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Runs a semantic query over the local SQLite index. Returns top matching nodes with relevance scores. Use <code>--agent</code> to filter by agent tag.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki vault query "how do we handle auth" --agent=backend-dev</span><br>
+            <span class="o">→ routers/auth.py (0.94) · models/user.py (0.91)</span><br>
+            <span class="o">→ plans/jwt-auth/prd.md (0.87)</span><br>
+            <span class="o">→ heuristics/never-trust-client-input.md (0.82)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki error <span class="arg">"&lt;description&gt;"</span> <span class="flag">--agent=name</span></span>
+        <span class="cmd-brief">record a "do not" mistake</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Creates an error memory node AND adds it to <code>project-facts.md</code>'s "Do NOT" section. Every run of the specified agent will see this before starting.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki error "Used print() instead of logger" --agent=backend-dev</span><br>
+            <span class="ok">✓ memory-vault/errors/used-print-instead-of-logger.md created</span><br>
+            <span class="ok">✓ project-facts.md "Do NOT" section updated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault dashboard</span>
+        <span class="cmd-brief">open interactive graph in browser</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Opens a D3.js force-directed graph of the memory vault in your browser. Node colors by type. Click to highlight connections. Each panel shows the raw file content.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UTILITY COMMANDS -->
+  <div class="cmd-category">
+    <div class="cmd-category-title">Utility &amp; Hotfix</div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki score <span class="arg">[path]</span></span>
+        <span class="cmd-brief">evaluate codebase quality</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Runs a quick quality audit: test coverage proxy, security pattern scan, hook compliance check, memory vault health. Returns a score out of 100.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki score .</span><br>
+            <span class="o">Tests: 78/100 · Security: 92/100 · Memory: 85/100</span><br>
+            <span class="o">Overall: 84/100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki export <span class="flag">[--format=json|yaml|md]</span></span>
+        <span class="cmd-brief">export full config</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Exports the complete Tasuki configuration (agents, hooks, facts, capability map) as a portable file. Use for team sharing or backup.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki cleanup <span class="flag">[--dry-run]</span></span>
+        <span class="cmd-brief">remove unused agents for this stack</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Removes agents not applicable to the detected stack. A pure backend project doesn't need a frontend agent. Use <code>--dry-run</code> to preview what would be removed. Cleanup is user-driven — Tasuki never auto-removes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- STACK PROFILES -->
+<div class="sect">
+  <div class="eyebrow">Auto-detection</div>
+  <h2 class="section-title">13 stack profiles.<br>Zero configuration.</h2>
+  <p class="section-sub">Detection runs entirely in bash — no API calls. Reads actual imports, package files, and directory structure. Not guessing.</p>
+
+  <div class="stack-grid">
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--backend);">FastAPI</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>from fastapi import</code> in py files</div>
+        <div class="stack-detect-item"><code>fastapi</code> in requirements.txt</div>
+        <div class="stack-detect-item">Alembic migrations detected</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--backend);">Django</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>django.db.models</code> imports</div>
+        <div class="stack-detect-item"><code>manage.py</code> + <code>settings.py</code></div>
+        <div class="stack-detect-item">Django migrations directory</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--backend);">Flask</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>from flask import Flask</code></div>
+        <div class="stack-detect-item"><code>flask</code> in requirements.txt</div>
+        <div class="stack-detect-item">Flask-Migrate or raw SQL</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--frontend);">Next.js</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>next</code> in package.json</div>
+        <div class="stack-detect-item"><code>app/</code> or <code>pages/</code> directory</div>
+        <div class="stack-detect-item">next.config.js present</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--frontend);">SvelteKit</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>@sveltejs/kit</code> in package.json</div>
+        <div class="stack-detect-item"><code>svelte.config.js</code></div>
+        <div class="stack-detect-item"><code>src/routes/</code> directory</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--frontend);">Nuxt</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>nuxt</code> in package.json</div>
+        <div class="stack-detect-item"><code>nuxt.config.ts</code></div>
+        <div class="stack-detect-item"><code>pages/</code> or <code>app.vue</code></div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--backend);">Express</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>express</code> in package.json</div>
+        <div class="stack-detect-item"><code>app.listen(</code> in JS/TS</div>
+        <div class="stack-detect-item">Sequelize or Knex detected</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--backend);">NestJS</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>@nestjs/core</code> in package.json</div>
+        <div class="stack-detect-item"><code>@Module</code> decorators</div>
+        <div class="stack-detect-item">TypeORM or Prisma migrations</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--security);">Rails</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>rails</code> in Gemfile</div>
+        <div class="stack-detect-item"><code>config/routes.rb</code></div>
+        <div class="stack-detect-item"><code>db/migrate/</code> directory</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--dbarch);">Gin (Go)</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>gin-gonic/gin</code> in go.mod</div>
+        <div class="stack-detect-item"><code>gin.Default()</code> in Go files</div>
+        <div class="stack-detect-item">GORM migrations detected</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--devops);">Spring Boot</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>spring-boot</code> in pom.xml</div>
+        <div class="stack-detect-item"><code>@SpringBootApplication</code></div>
+        <div class="stack-detect-item">Flyway or Liquibase migrations</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--debugger);">Laravel</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item"><code>laravel/framework</code> in composer.json</div>
+        <div class="stack-detect-item"><code>artisan</code> file present</div>
+        <div class="stack-detect-item"><code>database/migrations/</code></div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-name" style="color:var(--text2);">Generic</div>
+      <div class="stack-detects">
+        <div class="stack-detect-item">No specific framework detected</div>
+        <div class="stack-detect-item">All 9 agents still configured</div>
+        <div class="stack-detect-item">No stack-specific migration patterns</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- HOOKS -->
+<div class="sect">
+  <div class="eyebrow">Enforcement hooks</div>
+  <h2 class="section-title">Three hooks.<br>Not advisory rules.</h2>
+  <p class="section-sub">Hooks intercept every Write/Edit call via <code>PreToolUse</code>. Exit code 2 blocks the action. No bypass, no workaround.</p>
+
+  <div style="margin-top:40px;">
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(245,230,66,0.1);">🛡</div>
+        <div>
+          <div class="hook-name">tdd-guard.sh</div>
+          <div class="hook-trigger">PreToolUse: Edit | Write → exit 2 if no test file</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Maps the implementation file being edited to its expected test file. If the test file doesn't exist, the edit is blocked with exit code 2. Forces TDD — you cannot write implementation without tests existing first.</div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">File → test mapping:</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'DM Mono',monospace;font-size:11px;">
+            <div style="background:var(--bg2);padding:10px 12px;border-radius:6px;border:1px solid var(--border);color:var(--text2);">app/routers/users.py<br><span style="color:var(--text3);">→ tests/test_users.py</span></div>
+            <div style="background:var(--bg2);padding:10px 12px;border-radius:6px;border:1px solid var(--border);color:var(--text2);">src/components/UserCard.tsx<br><span style="color:var(--text3);">→ src/components/UserCard.test.tsx</span></div>
+            <div style="background:var(--bg2);padding:10px 12px;border-radius:6px;border:1px solid var(--border);color:var(--text2);">services/payment.go<br><span style="color:var(--text3);">→ services/payment_test.go</span></div>
+            <div style="background:var(--bg2);padding:10px 12px;border-radius:6px;border:1px solid var(--border);color:var(--text2);">app/models/user.rb<br><span style="color:var(--text3);">→ spec/models/user_spec.rb</span></div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">Exceptions (never blocked):</div>
+        <div class="hook-blocks">
+          <span class="hook-block-item" style="background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.15);color:var(--reviewer);">config files</span>
+          <span class="hook-block-item" style="background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.15);color:var(--reviewer);">migrations</span>
+          <span class="hook-block-item" style="background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.15);color:var(--reviewer);">test files</span>
+          <span class="hook-block-item" style="background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.15);color:var(--reviewer);">Dockerfile</span>
+          <span class="hook-block-item" style="background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.15);color:var(--reviewer);">.tasuki/</span>
+          <span class="hook-block-item" style="background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.15);color:var(--reviewer);">docs/</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(255,68,68,0.1);">🔒</div>
+        <div>
+          <div class="hook-name">security-check.sh</div>
+          <div class="hook-trigger">PreToolUse: Edit | Write → exit 2 on dangerous patterns</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Scans the content being written for insecure patterns before they're committed to disk. First line of defense — catches the most obvious issues at write time, before Security (Stage 6) does the deep analysis.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">Python blocks:</div>
+            <div class="hook-blocks">
+              <span class="hook-block-item">f-strings in SQL</span>
+              <span class="hook-block-item">pickle.loads</span>
+              <span class="hook-block-item">os.system</span>
+              <span class="hook-block-item">subprocess shell=True</span>
+              <span class="hook-block-item">eval()</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">JS/TS blocks:</div>
+            <div class="hook-blocks">
+              <span class="hook-block-item">eval()</span>
+              <span class="hook-block-item">innerHTML assignment</span>
+              <span class="hook-block-item">exec() with interpolation</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">Go blocks:</div>
+            <div class="hook-blocks">
+              <span class="hook-block-item">fmt.Sprintf for SQL</span>
+              <span class="hook-block-item">string concat in exec</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">Universal:</div>
+            <div class="hook-blocks">
+              <span class="hook-block-item">hardcoded secrets</span>
+              <span class="hook-block-item">Docker runs as root</span>
+              <span class="hook-block-item">Svelte {@html} unsafe</span>
+            </div>
+          </div>
+        </div>
+        <div class="info-box" style="margin-top:16px;">
+          <strong>Smart filtering:</strong> Doesn't block mock values in tests (<code>password = "test123"</code>), placeholder comments (<code># TODO: use env var</code>), or documentation examples. Only real production code patterns.
+        </div>
+      </div>
+    </div>
+
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(160,168,176,0.1);">🔐</div>
+        <div>
+          <div class="hook-name">protect-files.sh</div>
+          <div class="hook-trigger">PreToolUse: Edit | Write → exit 2 on protected paths</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Blocks any agent from editing sensitive files. Reads the protected paths from <code>.tasuki/config/protected-files.txt</code>, which is populated with stack-specific entries during onboard.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;">
+          <span class="hook-block-item">.env · .env.*</span>
+          <span class="hook-block-item">secrets/</span>
+          <span class="hook-block-item">package-lock.json</span>
+          <span class="hook-block-item">Pipfile.lock</span>
+          <span class="hook-block-item">yarn.lock</span>
+          <span class="hook-block-item">.git/</span>
+          <span class="hook-block-item">node_modules/</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- MCP TABLE -->
+<div class="sect">
+  <div class="eyebrow">MCP servers</div>
+  <h2 class="section-title">Each MCP mapped<br>to specific stages.</h2>
+  <p class="section-sub">When you run <code>tasuki install mcp X</code>, it shows you exactly which stages and agents it connects to.</p>
+
+  <table class="mcp-table">
+    <thead>
+      <tr>
+        <th>MCP</th>
+        <th>Stage</th>
+        <th>Agent(s)</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Taskmaster</td>
+        <td>1b</td>
+        <td>Planner</td>
+        <td>Parse PRD into per-agent tasks (~50 tokens each vs 2000 for full PRD)</td>
+      </tr>
+      <tr>
+        <td>Context7</td>
+        <td>ALL</td>
+        <td>All agents</td>
+        <td>Up-to-date framework documentation — prevents hallucinated API usage</td>
+      </tr>
+      <tr>
+        <td>Playwright</td>
+        <td>2, 5</td>
+        <td>QA, Frontend</td>
+        <td>E2E testing automation and visual regression testing</td>
+      </tr>
+      <tr>
+        <td>Postgres</td>
+        <td>3, 5.5</td>
+        <td>DB Architect, Debugger</td>
+        <td>Schema inspection, data diagnostics, query analysis</td>
+      </tr>
+      <tr>
+        <td>Figma</td>
+        <td>5a</td>
+        <td>Frontend</td>
+        <td>Pull design specs directly — exact colors, spacing, component specs</td>
+      </tr>
+      <tr>
+        <td>Stitch</td>
+        <td>5a</td>
+        <td>Frontend</td>
+        <td>Generate design preview when no Figma file exists</td>
+      </tr>
+      <tr>
+        <td>Semgrep</td>
+        <td>6, 7</td>
+        <td>Security, Reviewer</td>
+        <td>Static analysis — patterns the human eye misses at scale</td>
+      </tr>
+      <tr>
+        <td>Sentry</td>
+        <td>5.5, 6, 8</td>
+        <td>Debugger, Security, DevOps</td>
+        <td>Error tracking, exception correlation, health checks after deploy</td>
+      </tr>
+      <tr>
+        <td>GitHub</td>
+        <td>7, 8</td>
+        <td>Reviewer, DevOps</td>
+        <td>PR creation, CI status, branch protection checks</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="div">
+
+<!-- MULTI-AI ADAPTERS -->
+<div class="sect">
+  <div class="eyebrow">Multi-AI support</div>
+  <h2 class="section-title">One config.<br>Eight AI tools.</h2>
+  <p class="section-sub">Tasuki's internal format (<code>.tasuki/</code>) is AI-agnostic. Adapters translate to each platform. Claude Code gets the most — it's the only tool with native sub-agents.</p>
+
+  <div class="adapter-grid">
+    <div class="adapter-card" style="border-color:rgba(255,255,255,0.18);">
+      <div class="adapter-name">Claude Code</div>
+      <div class="adapter-file" style="color:var(--reviewer);">CLAUDE.md · hooks active</div>
+      <div class="adapter-features">Full pipeline via <code>Agent()</code> sub-agents · mechanical hooks · full memory</div>
+    </div>
+    <div class="adapter-card">
+      <div class="adapter-name">Cursor</div>
+      <div class="adapter-file">.cursor/rules/ · mcp.json</div>
+      <div class="adapter-features">Role-switching pipeline · advisory rules · full memory vault</div>
+    </div>
+    <div class="adapter-card">
+      <div class="adapter-name">Codex CLI</div>
+      <div class="adapter-file">AGENTS.md</div>
+      <div class="adapter-features">Role-switching · o3 for thinking, o4-mini for execution · memory vault</div>
+    </div>
+    <div class="adapter-card">
+      <div class="adapter-name">GitHub Copilot</div>
+      <div class="adapter-file">.github/instructions/</div>
+      <div class="adapter-features">Per-agent instruction files · advisory security rules · memory vault</div>
+    </div>
+    <div class="adapter-card">
+      <div class="adapter-name">Windsurf</div>
+      <div class="adapter-file">.windsurfrules</div>
+      <div class="adapter-features">Single rules file · role-switching protocol · memory vault</div>
+    </div>
+    <div class="adapter-card">
+      <div class="adapter-name">Continue</div>
+      <div class="adapter-file">.continue/rules/</div>
+      <div class="adapter-features">Per-agent rule files · advisory hooks · memory vault</div>
+    </div>
+    <div class="adapter-card">
+      <div class="adapter-name">Roo Code</div>
+      <div class="adapter-file">.roo/rules/</div>
+      <div class="adapter-features">Custom agent modes · role-switching · memory vault</div>
+    </div>
+    <div class="adapter-card">
+      <div class="adapter-name">Gemini CLI</div>
+      <div class="adapter-file">GEMINI.md</div>
+      <div class="adapter-features">gemini-2.5-pro for thinking · gemini-2.5-flash for execution · memory</div>
+    </div>
+  </div>
+
+  <!-- MODEL TRANSLATION TABLE -->
+  <div style="margin-top:48px;">
+    <div class="eyebrow" style="margin-bottom:16px;">Model translation</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:20px;">Adapters automatically translate model references. "thinking" and "execution" are tiers, not hardcoded model names.</p>
+    <table class="mcp-table">
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Claude Code</th>
+          <th>Codex CLI</th>
+          <th>Gemini CLI</th>
+          <th>Cursor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--planner);">thinking</td>
+          <td>claude-opus-4</td>
+          <td>o3</td>
+          <td>gemini-2.5-pro</td>
+          <td>claude-sonnet-4</td>
+        </tr>
+        <tr>
+          <td style="color:var(--backend);">execution</td>
+          <td>claude-sonnet-4</td>
+          <td>o4-mini</td>
+          <td>gemini-2.5-flash</td>
+          <td>claude-sonnet-4</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box" style="margin-top:16px;">
+      <strong>Why tiered models?</strong> Planner, Security, and Reviewer use "thinking" (opus/o3) for deep reasoning. The 6 implementation agents use "execution" (sonnet/o4-mini) for speed. This saves ~60% on token costs without sacrificing quality where it matters.
+    </div>
+  </div>
+</div>
+
+<!-- WHAT ONBOARD GENERATES -->
+<div class="sect">
+  <div class="eyebrow">What gets generated</div>
+  <h2 class="section-title">One command.<br>All of this.</h2>
+  <p class="section-sub">Running <code>tasuki onboard .</code> on a Django project generates this structure in ~10 seconds. Zero API calls.</p>
+
+  <div style="max-width:700px;margin:40px auto 0;">
+    <div class="vault-tree">
+      <div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;margin-bottom:16px;color:var(--text);">Generated files</div>
+<span class="vt-dir">your-project/</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-file">CLAUDE.md</span>                       <span class="vt-comment">  ← orchestration brain (auto-generated)</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-file">.mcp.json</span>                       <span class="vt-comment">  ← MCP server configuration</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-dir">.tasuki/</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">agents/</span>                     <span class="vt-comment">  ← 9 specialized agent files (250+ lines each)</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">rules/</span>                      <span class="vt-comment">  ← auto-loaded conventions per file type</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">hooks/</span>                      <span class="vt-comment">  ← tdd-guard, security-check, protect-files</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">skills/</span>                     <span class="vt-comment">  ← 10+ reusable skill definitions</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-file">settings.json</span>               <span class="vt-comment">  ← permissions + hook configuration</span><br>
+<span style="color:var(--text3);">│   └── </span><span class="vt-dir">config/</span><br>
+<span style="color:var(--text3);">│       ├── </span><span class="vt-file">project-facts.md</span>        <span class="vt-comment">  ← verified stack info (~156 tokens)</span><br>
+<span style="color:var(--text3);">│       ├── </span><span class="vt-file">capability-map.yaml</span>     <span class="vt-comment">  ← agent routing index</span><br>
+<span style="color:var(--text3);">│       └── </span><span class="vt-file">rag-sync-batch.jsonl</span>    <span class="vt-comment">  ← deep memory index</span><br>
+<span style="color:var(--text3);">├── </span><span class="vt-dir">memory-vault/</span>                   <span class="vt-comment">  ← knowledge graph (wikilinks)</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">agents/</span> <span class="vt-dir">heuristics/</span> <span class="vt-dir">bugs/</span>   <span class="vt-comment">  ← 9 node types</span><br>
+<span style="color:var(--text3);">│   └── </span><span class="vt-dir">tools/</span> <span class="vt-dir">decisions/</span> <span class="vt-dir">stack/</span>   <span class="vt-comment">  ← auto-seeded from detection</span><br>
+<span style="color:var(--text3);">└── </span><span class="vt-dir">tasuki-plans/</span>                   <span class="vt-comment">  ← pipeline plan tracking</span><br>
+<span style="color:var(--text3);">    └── </span><span class="vt-file">index.md</span>                    <span class="vt-comment">  ← feature index with status</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:var(--text);">9</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">agents configured</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:var(--text);">3</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">hooks installed</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:var(--text);">20</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">vault nodes seeded</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:var(--reviewer);">$0</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">API calls made</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- FAQ -->
+<div class="sect">
+  <div class="eyebrow">Common questions</div>
+  <h2 class="section-title">CLI FAQ</h2>
+
+  <div class="faq-list" style="max-width:700px;margin:40px auto 0;">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Do I need all 36 commands?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">No. 90% of users only need 3: <code>tasuki</code> (onboard), <code>tasuki dashboard</code>, and <code>tasuki progress</code>. The rest are power-user tools for debugging, team workflows, and plugin management. Think of it like <code>git</code> — 150+ commands, you use 5.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What does "onboard" actually scan?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">5 detectors run against your actual files — no API calls. Backend detector greps imports for framework detection. Database detector checks <code>requirements.txt</code>, <code>package.json</code>, and config files. Frontend detector looks for React/Vue/Svelte patterns. Infra detector finds Docker/CI configs. Testing detector finds test frameworks and coverage tools. Everything verified from real files, not guessed.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">My stack isn't in the 13 profiles. Will it work?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes — the Generic profile activates as fallback. All 9 agents still configure with universal best practices. You just won't get stack-specific migration patterns or framework-aware test conventions. You can also <a href="https://github.com/ForeroAlexander/Tasuki/blob/main/CONTRIBUTING.md" target="_blank" style="color:var(--text);">contribute a new profile</a> — it's a YAML file with detection rules and conventions.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">How do hooks work mechanically?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">On Claude Code: hooks are registered in <code>settings.json</code> as <code>PreToolUse</code> events. When Claude tries to Edit or Write a file, the hook script runs first. Exit 0 = allow, exit 2 = block with message. Claude Code enforces this mechanically — the AI cannot bypass it. On other tools: hooks become advisory rules in the AI's instructions — strongly worded but not physically enforced.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I use Tasuki with multiple AI tools on the same project?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes. Run <code>tasuki onboard . --target=all</code> and it generates config for all 8 tools simultaneously. Each adapter writes to its own location (<code>CLAUDE.md</code>, <code>.cursor/rules/</code>, <code>.windsurfrules</code>, etc.). They share the same <code>.tasuki/</code> directory, memory vault, and plans.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What does the dashboard show?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">A local HTML dashboard served at <code>localhost:8686</code> with: pipeline progress with animated agent characters, interactive D3.js knowledge graph, cost-per-task table, health score breakdown, agent usage charts, mode distribution, and an activity log showing errors prevented and heuristics applied. Auto-updates when pipeline state changes.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">How do I install a plugin?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a"><code>tasuki install mcp playwright</code> adds it to <code>.mcp.json</code> and tells you which pipeline stages use it ("Stage 2 QA + Stage 5 Frontend"). <code>tasuki install agent mobile-dev</code> creates the agent file and auto-registers it in the capability map. <code>tasuki plugins</code> shows the full catalog (23 MCPs, 11 skills).</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Does Tasuki send my code anywhere?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">No. Tasuki is a CLI that generates config files locally. It makes zero network requests — no analytics, no telemetry, no phone home. Your code goes wherever your AI tool already sends it (Claude API, OpenAI API, etc.). Tasuki adds zero new data flows. The entire framework is bash scripts that read and write local files.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2 class="cta-title">36 commands.<br>10 seconds to configure.</h2>
+  <p class="cta-sub">Everything above is what you get when you run one command.</p>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div class="cta-install" onclick="copyCmd(this)">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
+      npm install -g tasuki
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </div>
+    <div class="cta-hint" id="copy-hint">click to copy</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <svg width="18" height="18" viewBox="0 0 92 84" fill="none" style="opacity:0.5">
+      <line x1="18" y1="12" x2="52" y2="8"   stroke="#D8D4CC" stroke-width="1.2" opacity="0.55"/>
+      <line x1="52" y1="8"  x2="72" y2="28"  stroke="#F5E642"  stroke-width="1.2" opacity="0.5"/>
+      <line x1="72" y1="28" x2="62" y2="48"  stroke="#4A9EFF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="62" y1="48" x2="38" y2="58"  stroke="#00D4FF"  stroke-width="1.2" opacity="0.52"/>
+      <line x1="38" y1="58" x2="28" y2="72"  stroke="#FF7B6B"  stroke-width="1.2" opacity="0.46"/>
+      <line x1="28" y1="72" x2="58" y2="72"  stroke="#FF4444"  stroke-width="1.2" opacity="0.56"/>
+      <line x1="58" y1="72" x2="76" y2="60"  stroke="#4ADE80"  stroke-width="1.2" opacity="0.5"/>
+      <circle cx="18" cy="12" r="4.5" fill="#D8D4CC"/>
+      <circle cx="52" cy="8"  r="4"   fill="#F5E642"/>
+      <circle cx="72" cy="28" r="3.5" fill="#4A9EFF"/>
+      <circle cx="62" cy="48" r="5"   fill="#00D4FF"/>
+      <circle cx="38" cy="58" r="4"   fill="#FF7B6B"/>
+      <circle cx="14" cy="44" r="3"   fill="#FF8C2B"/>
+      <circle cx="28" cy="72" r="4.5" fill="#FF4444"/>
+      <circle cx="58" cy="72" r="4.5" fill="#4ADE80"/>
+      <circle cx="76" cy="60" r="3.5" fill="#A0A8B0"/>
+    </svg>
+    © 2026 Tasuki · MIT License
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/ForeroAlexander/Tasuki" target="_blank">GitHub</a>
+    <a href="index.html">Home</a>
+    <a href="pipeline.html">Pipeline</a>
+    <a href="memory.html">Memory</a>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
