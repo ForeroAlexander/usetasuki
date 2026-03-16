@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CLI Reference — Tasuki</title>
-<meta name="description" content="Complete Tasuki CLI reference: all 36 commands, 13 stack profiles, 3 hooks, 9 MCP servers, and multi-AI adapter system.">
+<meta name="description" content="Complete Tasuki CLI reference: all commands, 13 stack profiles, 7 hooks, 9 MCP servers, vault push/pull, and multi-AI adapter system.">
 <link rel="icon" type="image/svg+xml" href="assets/tasuki-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,7 +58,7 @@
   <div class="hero-grid"></div>
   <div class="page-hero-eyebrow">Reference</div>
   <h1 class="page-hero-title">CLI Reference</h1>
-  <p class="page-hero-sub">36 commands, 13 stack profiles, 3 hooks, 9 MCP servers, 8 AI adapters. Everything you need to configure, extend, and debug Tasuki.</p>
+  <p class="page-hero-sub">13 stack profiles, 7 mechanical hooks, 9 MCP servers, 8 AI adapters. Everything you need to configure, extend, and debug Tasuki (&#35167;).</p>
 </div>
 
 <div class="sect">
@@ -80,7 +80,7 @@
       <span class="t-line t-dim">  ✓ PostgreSQL (from requirements.txt: psycopg2)</span>
       <span class="t-line t-dim">  ✓ React + TypeScript (from package.json)</span>
       <span class="t-line t-dim">  Phase 2: 13 profiles evaluated → fastapi-react selected</span>
-      <span class="t-line t-dim">  Phase 3: Rendering 9 agents + 3 hooks...</span>
+      <span class="t-line t-dim">  Phase 3: Rendering 9 agents + 7 hooks...</span>
       <span class="t-line t-dim">  Phase 5: Initializing knowledge graph (15 nodes)...</span>
       <span class="t-line t-dim">  Phase 7: Generating CLAUDE.md adapter...</span>
       <span class="t-line t-ok">  ✓ Done in 8s · $0.00 · Talk to Claude Code normally.</span>
@@ -133,7 +133,7 @@
           <div class="cmd-example">
             <span class="p">$</span> <span class="c">tasuki doctor</span><br>
             <span class="ok">✓ 9 agents valid</span><br>
-            <span class="ok">✓ 3 hooks executable</span><br>
+            <span class="ok">✓ 7 hooks executable</span><br>
             <span class="warn">⚠ project-facts.md: 2 unverified paths</span>
           </div>
         </div>
@@ -153,7 +153,7 @@
             <span class="p">$</span> <span class="c">tasuki status</span><br>
             <span class="o">Mode: standard · Target: claude</span><br>
             <span class="o">Stack: FastAPI + PostgreSQL + React</span><br>
-            <span class="o">Agents: 9 active · Hooks: 3 · Memory: 34 nodes</span>
+            <span class="o">Agents: 9 active · Hooks: 7 · Memory: 34 nodes</span>
           </div>
         </div>
       </div>
@@ -172,7 +172,7 @@
       </div>
       <div class="cmd-detail">
         <div class="cmd-detail-inner">
-          <div class="cmd-desc">Sets the execution mode written to CLAUDE.md. <strong>fast</strong>: 3 agents, ~$0.26, small bugs. <strong>standard</strong>: 6 agents, ~$0.68, new features. <strong>serious</strong>: all 9 agents, RAG mandatory, full retries.</div>
+          <div class="cmd-desc">Sets the execution mode written to CLAUDE.md. <strong>fast</strong>: skip planner, depth=0, ~$0.26, small bugs. <strong>standard</strong>: full pipeline, depth=1, ~$0.68, new features. <strong>serious</strong>: 3 reviewer rounds, depth=2, all 9 agents, RAG mandatory.</div>
           <div class="cmd-example">
             <span class="p">$</span> <span class="c">tasuki mode standard</span><br>
             <span class="ok">✓ Mode set to standard (6 agents, ~$0.68/task)</span>
@@ -194,7 +194,7 @@
       </div>
       <div class="cmd-detail">
         <div class="cmd-detail-inner">
-          <div class="cmd-desc">Installs an MCP server and wires it into the appropriate pipeline stages and agents. Shows you exactly which stages and agents the MCP connects to before confirming.</div>
+          <div class="cmd-desc">Installs an MCP server and wires it into the appropriate pipeline stages and agents. Shows you exactly which stages and agents the MCP connects to, plus setup instructions with any required credentials, before confirming.</div>
           <div class="cmd-example">
             <span class="p">$</span> <span class="c">tasuki install mcp playwright</span><br>
             <span class="o">→ Stage 2 (QA E2E testing)</span><br>
@@ -299,6 +299,133 @@
 
     <div class="cmd-block" onclick="toggleCmd(this)">
       <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault init</span>
+        <span class="cmd-brief">initialize memory vault</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Creates the <code>memory-vault/</code> directory structure with all node type subdirectories. Typically called automatically during <code>tasuki onboard</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault search <span class="arg">"&lt;pattern&gt;"</span> <span class="flag">[--agent=name]</span></span>
+        <span class="cmd-brief">grep wikilink graph</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Searches the wikilink knowledge graph (Layer 1) by pattern. Faster than vault query — uses grep, not vector search. Use <code>--agent</code> to filter by agent tag.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault expand <span class="arg">&lt;node&gt;</span> <span class="flag">[--depth=1|2]</span></span>
+        <span class="cmd-brief">BFS graph expansion</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Traverses the knowledge graph from a node using BFS O(V+E). At depth=1, returns directly connected nodes. At depth=2, returns nodes connected to those nodes. Agents use this to discover relevant context they wouldn't find by tag alone.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki vault expand advisory-lock-bug --depth=2</span><br>
+            <span class="o">Level 1: [[db-architect]] [[backend-dev]] [[asyncpg]]</span><br>
+            <span class="o">Level 2: [[always-index-lookups]] [[parameterized-queries]] [[postgres-mcp]]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault confidence <span class="arg">&lt;node&gt;</span> <span class="arg">&lt;high|experimental|deprecated&gt;</span></span>
+        <span class="cmd-brief">set confidence level</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Sets the confidence level on a memory node. <strong>high</strong>: proven pattern, always loaded. <strong>experimental</strong>: new insight, loaded but flagged. <strong>deprecated</strong>: outdated, excluded from agent context. Confidence auto-decays over time if not reinforced.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki vault confidence always-index-lookups high</span><br>
+            <span class="ok">✓ Confidence set: high (applied 12 times)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault decay <span class="flag">[--dry-run]</span></span>
+        <span class="cmd-brief">auto-decay stale entries</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Runs the auto-decay algorithm on all vault entries. Entries with low applied-count and old last-used dates get their confidence downgraded (high → experimental → deprecated). Use <code>--dry-run</code> to preview what would change.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki vault decay --dry-run</span><br>
+            <span class="o">Would decay: migration-no-downgrade (experimental → deprecated, 0 uses in 90d)</span><br>
+            <span class="o">Would keep: parameterized-queries (high, 12 uses in 30d)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault push <span class="flag">[--branch=name]</span></span>
+        <span class="cmd-brief">share vault via git</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Pushes the memory vault to a git branch for team sharing. Other developers pull to get your learned heuristics, error memories, and architectural decisions.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki vault push --branch=tasuki-vault</span><br>
+            <span class="ok">✓ Pushed 34 nodes to tasuki-vault branch</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault pull <span class="flag">[--branch=name]</span></span>
+        <span class="cmd-brief">pull team vault changes</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Pulls memory vault updates from a shared git branch. Merges new heuristics, error entries, and decisions into your local vault without overwriting your own additions.</div>
+          <div class="cmd-example">
+            <span class="p">$</span> <span class="c">tasuki vault pull --branch=tasuki-vault</span><br>
+            <span class="o">Merged: 3 new heuristics, 1 error, 2 decisions</span><br>
+            <span class="ok">✓ Local vault updated (37 nodes)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
+        <span class="cmd-syntax">tasuki vault stats</span>
+        <span class="cmd-brief">vault health summary</span>
+        <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
+      </div>
+      <div class="cmd-detail">
+        <div class="cmd-detail-inner">
+          <div class="cmd-desc">Shows vault health: total nodes, edges, entries per agent, confidence distribution, most/least applied heuristics, and stale entries candidates for decay.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-block" onclick="toggleCmd(this)">
+      <div class="cmd-head">
         <span class="cmd-syntax">tasuki error <span class="arg">"&lt;description&gt;"</span> <span class="flag">--agent=name</span></span>
         <span class="cmd-brief">record a "do not" mistake</span>
         <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
@@ -317,13 +444,13 @@
 
     <div class="cmd-block" onclick="toggleCmd(this)">
       <div class="cmd-head">
-        <span class="cmd-syntax">tasuki vault dashboard</span>
+        <span class="cmd-syntax">tasuki vault dashboard <span class="flag">[--generate]</span></span>
         <span class="cmd-brief">open interactive graph in browser</span>
         <svg class="cmd-expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5L7 9L11 5"/></svg>
       </div>
       <div class="cmd-detail">
         <div class="cmd-detail-inner">
-          <div class="cmd-desc">Opens a D3.js force-directed graph of the memory vault in your browser. Node colors by type. Click to highlight connections. Each panel shows the raw file content.</div>
+          <div class="cmd-desc">Opens a D3.js force-directed graph of the memory vault in your browser. Node colors by type. Click to highlight connections. Each panel shows the raw file content. Use <code>--generate</code> to regenerate the static HTML dashboard without opening the browser.</div>
         </div>
       </div>
     </div>
@@ -499,9 +626,9 @@
 
 <!-- HOOKS -->
 <div class="sect">
-  <div class="eyebrow">Enforcement hooks</div>
-  <h2 class="section-title">Three hooks.<br>Not advisory rules.</h2>
-  <p class="section-sub">Hooks intercept every Write/Edit call via <code>PreToolUse</code>. Exit code 2 blocks the action. No bypass, no workaround.</p>
+  <div class="eyebrow">Discipline — 7 mechanical hooks</div>
+  <h2 class="section-title">Seven hooks.<br>Not advisory rules.</h2>
+  <p class="section-sub">Hooks intercept every Write/Edit call via <code>PreToolUse</code>. Exit code 2 blocks the action. No bypass, no workaround. These are the mechanical enforcement layer — the discipline pillar of Tasuki.</p>
 
   <div style="margin-top:40px;">
     <div class="hook-block">
@@ -595,7 +722,7 @@
         </div>
       </div>
       <div class="hook-body">
-        <div class="hook-desc">Blocks any agent from editing sensitive files. Reads the protected paths from <code>.tasuki/config/protected-files.txt</code>, which is populated with stack-specific entries during onboard.</div>
+        <div class="hook-desc">Blocks any agent from editing .env, secrets, lock files, and other sensitive paths. Reads the protected paths from <code>.tasuki/config/protected-files.txt</code>, which is populated with stack-specific entries during onboard.</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;">
           <span class="hook-block-item">.env · .env.*</span>
           <span class="hook-block-item">secrets/</span>
@@ -605,6 +732,58 @@
           <span class="hook-block-item">.git/</span>
           <span class="hook-block-item">node_modules/</span>
         </div>
+      </div>
+    </div>
+
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(216,212,204,0.1);">📋</div>
+        <div>
+          <div class="hook-name">pipeline-trigger.sh</div>
+          <div class="hook-trigger">Activates on "tasuki" keyword in prompt</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Detects the word "tasuki" in the user's prompt and activates the full sequential pipeline. Without this keyword, the AI operates normally. This is the entry point — one word switches from freeform to disciplined process.</div>
+      </div>
+    </div>
+
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(74,158,255,0.1);">📊</div>
+        <div>
+          <div class="hook-name">pipeline-tracker.sh</div>
+          <div class="hook-trigger">Tracks pipeline stages automatically</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Maintains the pipeline state machine — tracks which stage is active, files_created, files_edited, and tests_run per stage. Writes machine-readable state for session continuity. If a session is interrupted, the next session reads this state and resumes.</div>
+      </div>
+    </div>
+
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(0,212,255,0.1);">📖</div>
+        <div>
+          <div class="hook-name">force-agent-read.sh</div>
+          <div class="hook-trigger">PreToolUse: Edit | Write → exit 2 if agent file not read</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Blocks any edit or write operation if the active agent hasn't read its own agent file first (<code>.tasuki/agents/{agent}.md</code>). Ensures every agent operates from its full role definition and memory before making changes.</div>
+      </div>
+    </div>
+
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(216,212,204,0.1);">🗺</div>
+        <div>
+          <div class="hook-name">force-planner-first.sh</div>
+          <div class="hook-trigger">PreToolUse: Edit | Write → exit 2 if no plan exists</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Blocks implementation without a plan. If no <code>tasuki-plans/{feature}/plan.md</code> exists, implementation code cannot be written. Forces the Planner stage to complete before any code is generated. Skipped in <code>fast</code> mode.</div>
       </div>
     </div>
   </div>
@@ -789,7 +968,7 @@
 <span style="color:var(--text3);">├── </span><span class="vt-dir">.tasuki/</span><br>
 <span style="color:var(--text3);">│   ├── </span><span class="vt-dir">agents/</span>                     <span class="vt-comment">  ← 9 specialized agent files (250+ lines each)</span><br>
 <span style="color:var(--text3);">│   ├── </span><span class="vt-dir">rules/</span>                      <span class="vt-comment">  ← auto-loaded conventions per file type</span><br>
-<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">hooks/</span>                      <span class="vt-comment">  ← tdd-guard, security-check, protect-files</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">hooks/</span>                      <span class="vt-comment">  ← 7 hooks: pipeline-trigger, tracker, tdd-guard, security-check, protect-files, force-agent-read, force-planner-first</span><br>
 <span style="color:var(--text3);">│   ├── </span><span class="vt-dir">skills/</span>                     <span class="vt-comment">  ← 10+ reusable skill definitions</span><br>
 <span style="color:var(--text3);">│   ├── </span><span class="vt-file">settings.json</span>               <span class="vt-comment">  ← permissions + hook configuration</span><br>
 <span style="color:var(--text3);">│   └── </span><span class="vt-dir">config/</span><br>
@@ -809,7 +988,7 @@
         <div style="font-size:11px;color:var(--text3);margin-top:4px;">agents configured</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
-        <div style="font-size:28px;font-weight:700;color:var(--text);">3</div>
+        <div style="font-size:28px;font-weight:700;color:var(--text);">7</div>
         <div style="font-size:11px;color:var(--text3);margin-top:4px;">hooks installed</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
@@ -846,7 +1025,7 @@
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">How do hooks work mechanically?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
-      <div class="faq-a">On Claude Code: hooks are registered in <code>settings.json</code> as <code>PreToolUse</code> events. When Claude tries to Edit or Write a file, the hook script runs first. Exit 0 = allow, exit 2 = block with message. Claude Code enforces this mechanically — the AI cannot bypass it. On other tools: hooks become advisory rules in the AI's instructions — strongly worded but not physically enforced.</div>
+      <div class="faq-a">On Claude Code: all 7 hooks are registered in <code>settings.json</code> as <code>PreToolUse</code> events. When Claude tries to Edit or Write a file, the hook script runs first. Exit 0 = allow, exit 2 = block with message. Claude Code enforces this mechanically — the AI cannot bypass it. The 7 hooks: pipeline-trigger (activates on "tasuki"), pipeline-tracker (tracks stages), tdd-guard (blocks edits without tests), security-check (blocks anti-patterns), protect-files (blocks .env/secrets), force-agent-read (blocks edits without reading agent file), force-planner-first (blocks implementation without a plan). On other tools: hooks become advisory rules — strongly worded but not physically enforced.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Can I use Tasuki with multiple AI tools on the same project?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
@@ -862,7 +1041,7 @@
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Does Tasuki send my code anywhere?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
-      <div class="faq-a">No. Tasuki is a CLI that generates config files locally. It makes zero network requests — no analytics, no telemetry, no phone home. Your code goes wherever your AI tool already sends it (Claude API, OpenAI API, etc.). Tasuki adds zero new data flows. The entire framework is bash scripts that read and write local files.</div>
+      <div class="faq-a">No. Tasuki is a CLI that generates config files locally. It makes zero network requests — no analytics, no telemetry, no phone home. Your code goes wherever your AI tool already sends it (Claude API, OpenAI API, etc.). Tasuki adds zero new data flows. The entire tool is bash scripts that read and write local files.</div>
     </div>
   </div>
 </div>
@@ -871,8 +1050,8 @@
 
 <!-- CTA -->
 <div class="cta-section">
-  <h2 class="cta-title">36 commands.<br>10 seconds to configure.</h2>
-  <p class="cta-sub">Everything above is what you get when you run one command.</p>
+  <h2 class="cta-title">Memory. Discipline.<br>Process. One command.</h2>
+  <p class="cta-sub">Everything above is what you get when you run <code>tasuki onboard .</code></p>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
     <div class="cta-install" onclick="copyCmd(this)">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>

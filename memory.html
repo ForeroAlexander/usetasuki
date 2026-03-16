@@ -56,16 +56,16 @@
 <!-- HERO -->
 <div class="page-hero">
   <div class="hero-grid"></div>
-  <div class="page-hero-eyebrow">Memory Architecture</div>
-  <h1 class="page-hero-title">Not a RAG.<br>Something lighter.</h1>
-  <p class="page-hero-sub">Two layers of persistent memory: a knowledge graph powered by wikilinks, and on-demand vector search over your codebase. Both run locally. No server. No embeddings pipeline.</p>
+  <div class="page-hero-eyebrow">Memory — two layers</div>
+  <h1 class="page-hero-title">Memory that persists<br>across sessions.</h1>
+  <p class="page-hero-sub">Two layers. Layer 1: wikilinks — $0, offline, human-readable markdown. Layer 2: RAG deep memory — on-demand for deep context. Agents traverse connected knowledge via Graph Expansion (BFS, O(V+E), 1-2 levels). Confidence scoring (high/experimental/deprecated) with auto-decay. Applied-count tracks how many times each heuristic was used. Team sync via vault push/pull through git branches.</p>
 </div>
 
 <!-- RAG COMPARISON -->
 <div class="sect">
-  <div class="eyebrow">The problem with RAG</div>
-  <h2 class="section-title">RAG is optimized<br>for millions of docs.</h2>
-  <p class="section-sub">You have tens of notes, not millions. Vector databases are overkill — and they hide what your agents actually know.</p>
+  <div class="eyebrow">Tasuki vs Traditional RAG</div>
+  <h2 class="section-title">Wikilinks are $0, offline,<br>human-readable.</h2>
+  <p class="section-sub">Layer 1 (wikilinks) costs nothing, runs offline, and you can read every memory in a text editor. RAG is Layer 2 — on-demand for deep context when agents need it. You don't choose one or the other; you get both.</p>
 
   <div class="memory-compare">
     <div class="mem-card">
@@ -125,9 +125,9 @@
 
 <!-- LAYER 1 -->
 <div class="sect">
-  <div class="eyebrow">Layer 1</div>
+  <div class="eyebrow">Layer 1 — Wikilinks (always on)</div>
   <h2 class="section-title">Wikilink<br>knowledge graph.</h2>
-  <p class="section-sub">Each memory is a node. Each <code>[[wikilink]]</code> is an edge. Agents read only what's linked to them — 18 entries (~72 tokens) instead of everything (~5000 tokens).</p>
+  <p class="section-sub">Each memory is a node. Each <code>[[wikilink]]</code> is an edge. Agents read only what's linked to them — 18 entries (~72 tokens) instead of everything (~5000 tokens). Graph Expansion uses BFS O(V+E) to traverse 1-2 levels of connected knowledge. Confidence scoring (high/experimental/deprecated) with auto-decay ensures stale knowledge doesn't pollute context. Applied-count tracks how many times each heuristic was actually used.</p>
 
   <!-- D3 GRAPH -->
   <div class="d3-graph-container" id="memory-graph">
@@ -148,7 +148,7 @@
     <div class="layer-card">
       <div class="layer-title"><div class="layer-dot" style="background:var(--reviewer);"></div>Layer 1 — Wikilinks (always on)</div>
       <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;">
-        Individual <code>.md</code> files in <code>memory-vault/</code>. Each references agents with <code>[[wikilinks]]</code>. Before each task, agents grep for their own name and load only those files.
+        Individual <code>.md</code> files in <code>memory-vault/</code>. Each references agents with <code>[[wikilinks]]</code>. Before each task, agents grep for their own name and load only those files. Graph Expansion (BFS) traverses 1-2 levels of connected nodes for deeper context. Each entry has a confidence level (high/experimental/deprecated) that auto-decays over time via <code>tasuki vault decay</code>. Applied-count tracks usage.
       </div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.9;">
         <span style="color:var(--text3);"># Before You Act (MANDATORY)</span><br>
@@ -160,9 +160,9 @@
       </div>
     </div>
     <div class="layer-card">
-      <div class="layer-title"><div class="layer-dot" style="background:var(--backend);"></div>Layer 2 — Deep Memory (on demand)</div>
+      <div class="layer-title"><div class="layer-dot" style="background:var(--backend);"></div>Layer 2 — RAG Deep Memory (on demand)</div>
       <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;">
-        Vector search over schema, APIs, migration history, PRDs, git log. Agents query it by semantic intent when they need historical context beyond their personal notes.
+        Vector search over schema, APIs, migration history, PRDs, git log. Agents query it by semantic intent when they need historical context beyond their wikilink memories. This is where traditional RAG lives — but it's on-demand, not always-on.
       </div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.9;">
         <span style="color:var(--text3);"># vault query</span><br>
@@ -181,9 +181,9 @@
 
 <!-- LAYER 2 IN DEPTH -->
 <div class="sect">
-  <div class="eyebrow">Layer 2 in depth</div>
-  <h2 class="section-title">Yes, we use RAG.<br>But differently.</h2>
-  <p class="section-sub">Layer 1 (wikilinks) is the fast index — always loaded, zero cost. Layer 2 uses a real vector store via MCP, but only when the agent needs deep context. The key difference: <strong>you choose the backend, not us</strong>.</p>
+  <div class="eyebrow">Layer 2 — RAG Deep Memory</div>
+  <h2 class="section-title">Yes, we use RAG.<br>But on-demand.</h2>
+  <p class="section-sub">Layer 1 (wikilinks) is the fast index — always loaded, zero cost. Layer 2 uses a real vector store via MCP, but only when the agent needs deep context. The key difference: <strong>you choose the backend, not us</strong>. Growth path: Scale 0 (wikilinks only) → Scale 1 (SQLite RAG) → Scale 2 (Qdrant) → Scale 3 (pgvector).</p>
 
   <!-- What Layer 2 indexes -->
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:800px;margin:40px auto 0;">
@@ -385,8 +385,8 @@
     </div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
       <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--backend);margin-bottom:10px;">CONNECTION 6</div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Capability Map</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Auto-generated from agent frontmatter. Planner reads this to route tasks by domain, not by name. Adding a new agent auto-updates the map.</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Team Sync</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">Share vault knowledge across your team via <code>tasuki vault push</code> / <code>tasuki vault pull</code> using git branches. One developer learns a pattern, the entire team benefits on the next pipeline run.</div>
     </div>
   </div>
 </div>
@@ -422,7 +422,7 @@
       </div>
     </div>
     <div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:16px;">Growth path — scale without changing agents</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:16px;">Growth path — Scale 0 → Scale 3, no agent changes</div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;">
         <div style="display:grid;grid-template-columns:auto 1fr 1fr;font-size:12px;">
           <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;">Scale</div>
@@ -629,8 +629,8 @@
 
 <!-- CTA -->
 <div class="cta-section">
-  <h2 class="cta-title">Your AI gets smarter<br>with every task.</h2>
-  <p class="cta-sub">Onboard once. The knowledge graph initializes automatically.</p>
+  <h2 class="cta-title">Memory that persists.<br>Knowledge that grows.</h2>
+  <p class="cta-sub">Onboard once. The knowledge graph initializes automatically. Every pipeline run makes it smarter.</p>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
     <div class="cta-install" onclick="copyCmd(this)">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>

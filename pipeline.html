@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pipeline — Tasuki</title>
-<meta name="description" content="The 9-stage multi-agent pipeline: sequential by design, with TDD enforcement, security auditing, and structured handoffs between specialized agents.">
+<meta name="description" content="Tasuki's 9-stage sequential pipeline with 7 mechanical hooks that block bad behavior, 3 execution modes, and a state machine that tracks every file and test per stage.">
 <link rel="icon" type="image/svg+xml" href="assets/tasuki-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,9 +56,9 @@
 <!-- HERO -->
 <div class="page-hero">
   <div class="hero-grid"></div>
-  <div class="page-hero-eyebrow">Architecture</div>
-  <h1 class="page-hero-title">The 9-Stage Pipeline</h1>
-  <p class="page-hero-sub">Sequential by design — every stage has a reason to go exactly where it does. Click any stage to see what it does, what tools it uses, and how it hands off to the next.</p>
+  <div class="page-hero-eyebrow">Process</div>
+  <h1 class="page-hero-title">A process your AI<br>can't skip.</h1>
+  <p class="page-hero-sub">Say "tasuki" in your prompt and the pipeline-trigger hook activates 9 specialist agents in sequence. 7 mechanical hooks enforce discipline at every step — no advisory rules, no hoping the AI behaves. The pipeline state machine tracks files_created, files_edited, and tests_run per stage. If interrupted, the next session reads machine-readable state and resumes.</p>
 </div>
 
 <!-- PIPELINE DEEP -->
@@ -612,9 +612,9 @@
 
 <!-- MODE COMPARISON -->
 <div class="sect">
-  <div class="eyebrow">Execution modes</div>
-  <h2 class="section-title">Stages run vary<br>by complexity.</h2>
-  <p class="section-sub">Capability-based routing skips agents when there's nothing for them to do. A pure bug fix doesn't need a DB migration.</p>
+  <div class="eyebrow">3 execution modes</div>
+  <h2 class="section-title">Fast, standard,<br>or serious.</h2>
+  <p class="section-sub"><strong>fast</strong>: skip planner, depth=0 — small bugs, quick tweaks. <strong>standard</strong>: full pipeline, depth=1 — new features. <strong>serious</strong>: 3 reviewer rounds, depth=2 — complex systems. Capability-based routing skips agents when there's nothing for them to do.</p>
 
   <div class="mode-grid">
     <div class="mode-card">
@@ -792,7 +792,7 @@
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">What if the session ends mid-pipeline?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
-      <div class="faq-a">The pipeline resumes from where it stopped. Each stage updates <code>tasuki-plans/{feature}/status.md</code> with checkboxes. When you say "continue" in a new session, the AI reads the status file, sees which stages are marked <code>[x]</code>, and continues from the first <code>[ ]</code>.</div>
+      <div class="faq-a">Session continuity is built in. The pipeline state machine writes machine-readable state (files_created, files_edited, tests_run per stage) to <code>tasuki-plans/{feature}/status.md</code>. When you start a new session and say "continue", the next session reads this state, sees which stages are marked <code>[x]</code>, and resumes from the first <code>[ ]</code>. No context is lost.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Can I add my own agents to the pipeline?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
@@ -818,7 +818,7 @@
 <!-- CTA -->
 <div class="cta-section">
   <h2 class="cta-title">See it run on<br>your project.</h2>
-  <p class="cta-sub">10 seconds to onboard. Your AI assistant becomes a team.</p>
+  <p class="cta-sub">10 seconds to onboard. Say "tasuki" and the pipeline activates.</p>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
     <div class="cta-install" onclick="copyCmd(this)">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
