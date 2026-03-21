@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CLI Reference — Tasuki</title>
-<meta name="description" content="Complete Tasuki CLI reference: all commands, 13 stack profiles, 7 hooks, 9 MCP servers, vault push/pull, and multi-AI adapter system.">
+<meta name="description" content="Complete Tasuki CLI reference: all commands, 13 stack profiles, 9 hooks, 9 MCP servers, vault push/pull, and multi-AI adapter system.">
 <link rel="icon" type="image/svg+xml" href="assets/tasuki-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,7 +58,7 @@
   <div class="hero-grid"></div>
   <div class="page-hero-eyebrow">Reference</div>
   <h1 class="page-hero-title">CLI Reference</h1>
-  <p class="page-hero-sub">13 stack profiles, 7 mechanical hooks, 9 MCP servers, 8 AI adapters. Everything you need to configure, extend, and debug Tasuki (&#35167;).</p>
+  <p class="page-hero-sub">13 stack profiles, 9 mechanical hooks, 9 MCP servers, 8 AI adapters. Everything you need to configure, extend, and debug Tasuki (&#35167;).</p>
 </div>
 
 <div class="sect">
@@ -71,7 +71,9 @@
     </div>
     <div class="terminal-body">
       <span class="t-line"><span class="t-p">$</span> <span class="t-cmd">npm install -g tasuki</span></span>
-      <span class="t-line t-dim">  Installed tasuki v1.0.0</span>
+      <span class="t-line t-dim">  Installed tasuki v1.1.0</span>
+      <span class="t-line">&nbsp;</span>
+      <span class="t-line t-dim" style="font-size:11px;opacity:0.5;">  # or: brew tap ForeroAlexander/tasuki && brew install tasuki</span>
       <span class="t-line">&nbsp;</span>
       <span class="t-line"><span class="t-p">$</span> <span class="t-cmd">cd your-project</span></span>
       <span class="t-line"><span class="t-p">$</span> <span class="t-cmd">tasuki onboard .</span></span>
@@ -80,7 +82,7 @@
       <span class="t-line t-dim">  ✓ PostgreSQL (from requirements.txt: psycopg2)</span>
       <span class="t-line t-dim">  ✓ React + TypeScript (from package.json)</span>
       <span class="t-line t-dim">  Phase 2: 13 profiles evaluated → fastapi-react selected</span>
-      <span class="t-line t-dim">  Phase 3: Rendering 9 agents + 7 hooks...</span>
+      <span class="t-line t-dim">  Phase 3: Rendering 9 agents + 9 hooks...</span>
       <span class="t-line t-dim">  Phase 5: Initializing knowledge graph (15 nodes)...</span>
       <span class="t-line t-dim">  Phase 7: Generating CLAUDE.md adapter...</span>
       <span class="t-line t-ok">  ✓ Done in 8s · $0.00 · Talk to Claude Code normally.</span>
@@ -133,7 +135,7 @@
           <div class="cmd-example">
             <span class="p">$</span> <span class="c">tasuki doctor</span><br>
             <span class="ok">✓ 9 agents valid</span><br>
-            <span class="ok">✓ 7 hooks executable</span><br>
+            <span class="ok">✓ 9 hooks executable</span><br>
             <span class="warn">⚠ project-facts.md: 2 unverified paths</span>
           </div>
         </div>
@@ -153,7 +155,7 @@
             <span class="p">$</span> <span class="c">tasuki status</span><br>
             <span class="o">Mode: standard · Target: claude</span><br>
             <span class="o">Stack: FastAPI + PostgreSQL + React</span><br>
-            <span class="o">Agents: 9 active · Hooks: 7 · Memory: 34 nodes</span>
+            <span class="o">Agents: 9 active · Hooks: 9 · Memory: 34 nodes</span>
           </div>
         </div>
       </div>
@@ -626,8 +628,8 @@
 
 <!-- HOOKS -->
 <div class="sect">
-  <div class="eyebrow">Discipline — 7 mechanical hooks</div>
-  <h2 class="section-title">Seven hooks.<br>Not advisory rules.</h2>
+  <div class="eyebrow">Discipline — 9 mechanical hooks</div>
+  <h2 class="section-title">Nine hooks.<br>Not advisory rules.</h2>
   <p class="section-sub">Hooks intercept every Write/Edit call via <code>PreToolUse</code>. Exit code 2 blocks the action. No bypass, no workaround. These are the mechanical enforcement layer — the discipline pillar of Tasuki.</p>
 
   <div style="margin-top:40px;">
@@ -786,6 +788,32 @@
         <div class="hook-desc">Blocks implementation without a plan. If no <code>tasuki-plans/{feature}/plan.md</code> exists, implementation code cannot be written. Forces the Planner stage to complete before any code is generated. Skipped in <code>fast</code> mode.</div>
       </div>
     </div>
+
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(74,158,255,0.1);">🤝</div>
+        <div>
+          <div class="hook-name">teammate-idle.sh</div>
+          <div class="hook-trigger">Fires when an Agent Teams teammate finishes its current task</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Fires when an Agent Teams teammate finishes its current task. Used to trigger the next pipeline stage — when one teammate completes, the hook signals the orchestrator to dispatch the next stage to an available teammate.</div>
+      </div>
+    </div>
+
+    <div class="hook-block">
+      <div class="hook-head">
+        <div class="hook-icon" style="background:rgba(74,222,128,0.1);">✅</div>
+        <div>
+          <div class="hook-name">task-completed.sh</div>
+          <div class="hook-trigger">Fires when a shared task is marked complete</div>
+        </div>
+      </div>
+      <div class="hook-body">
+        <div class="hook-desc">Fires when a shared task is marked complete. Used for pipeline state tracking and progress logging — updates the pipeline tracker, writes completion timestamps, and logs which teammate handled which stage.</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -811,7 +839,7 @@
         <td>Taskmaster</td>
         <td>1b</td>
         <td>Planner</td>
-        <td>Parse PRD into per-agent tasks (~50 tokens each vs 2000 for full PRD)</td>
+        <td>Parse PRD into per-agent tasks (~50 tokens each vs 2000 for full PRD) (native coordination in Agent Teams, MCP for other tools)</td>
       </tr>
       <tr>
         <td>Context7</td>
@@ -871,13 +899,13 @@
 <div class="sect">
   <div class="eyebrow">Multi-AI support</div>
   <h2 class="section-title">One config.<br>Eight AI tools.</h2>
-  <p class="section-sub">Tasuki's internal format (<code>.tasuki/</code>) is AI-agnostic. Adapters translate to each platform. Claude Code gets the most — it's the only tool with native sub-agents.</p>
+  <p class="section-sub">Tasuki's internal format (<code>.tasuki/</code>) is AI-agnostic. Adapters translate to each platform. Claude Code gets the most — it's the only tool with native Agent Teams.</p>
 
   <div class="adapter-grid">
     <div class="adapter-card" style="border-color:rgba(255,255,255,0.18);">
       <div class="adapter-name">Claude Code</div>
       <div class="adapter-file" style="color:var(--reviewer);">CLAUDE.md · hooks active</div>
-      <div class="adapter-features">Full pipeline via <code>Agent()</code> sub-agents · mechanical hooks · full memory</div>
+      <div class="adapter-features">Full pipeline via Agent Teams — real teammates with separate context windows · mechanical hooks · full memory</div>
     </div>
     <div class="adapter-card">
       <div class="adapter-name">Cursor</div>
@@ -968,7 +996,7 @@
 <span style="color:var(--text3);">├── </span><span class="vt-dir">.tasuki/</span><br>
 <span style="color:var(--text3);">│   ├── </span><span class="vt-dir">agents/</span>                     <span class="vt-comment">  ← 9 specialized agent files (250+ lines each)</span><br>
 <span style="color:var(--text3);">│   ├── </span><span class="vt-dir">rules/</span>                      <span class="vt-comment">  ← auto-loaded conventions per file type</span><br>
-<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">hooks/</span>                      <span class="vt-comment">  ← 7 hooks: pipeline-trigger, tracker, tdd-guard, security-check, protect-files, force-agent-read, force-planner-first</span><br>
+<span style="color:var(--text3);">│   ├── </span><span class="vt-dir">hooks/</span>                      <span class="vt-comment">  ← 9 hooks: pipeline-trigger, tracker, tdd-guard, security-check, protect-files, force-agent-read, force-planner-first, teammate-idle, task-completed</span><br>
 <span style="color:var(--text3);">│   ├── </span><span class="vt-dir">skills/</span>                     <span class="vt-comment">  ← 10+ reusable skill definitions</span><br>
 <span style="color:var(--text3);">│   ├── </span><span class="vt-file">settings.json</span>               <span class="vt-comment">  ← permissions + hook configuration</span><br>
 <span style="color:var(--text3);">│   └── </span><span class="vt-dir">config/</span><br>
@@ -988,7 +1016,7 @@
         <div style="font-size:11px;color:var(--text3);margin-top:4px;">agents configured</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
-        <div style="font-size:28px;font-weight:700;color:var(--text);">7</div>
+        <div style="font-size:28px;font-weight:700;color:var(--text);">9</div>
         <div style="font-size:11px;color:var(--text3);margin-top:4px;">hooks installed</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;">
@@ -1025,7 +1053,7 @@
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">How do hooks work mechanically?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
-      <div class="faq-a">On Claude Code: all 7 hooks are registered in <code>settings.json</code> as <code>PreToolUse</code> events. When Claude tries to Edit or Write a file, the hook script runs first. Exit 0 = allow, exit 2 = block with message. Claude Code enforces this mechanically — the AI cannot bypass it. The 7 hooks: pipeline-trigger (activates on "tasuki"), pipeline-tracker (tracks stages), tdd-guard (blocks edits without tests), security-check (blocks anti-patterns), protect-files (blocks .env/secrets), force-agent-read (blocks edits without reading agent file), force-planner-first (blocks implementation without a plan). On other tools: hooks become advisory rules — strongly worded but not physically enforced.</div>
+      <div class="faq-a">On Claude Code: all 9 hooks are registered in <code>settings.json</code> as <code>PreToolUse</code> events. When Claude tries to Edit or Write a file, the hook script runs first. Exit 0 = allow, exit 2 = block with message. Claude Code enforces this mechanically — the AI cannot bypass it. The 9 hooks: pipeline-trigger (activates on "tasuki"), pipeline-tracker (tracks stages), tdd-guard (blocks edits without tests), security-check (blocks anti-patterns), protect-files (blocks .env/secrets), force-agent-read (blocks edits without reading agent file), force-planner-first (blocks implementation without a plan), teammate-idle (fires when an Agent Teams teammate finishes its task), task-completed (fires when a shared task is marked complete). On other tools: hooks become advisory rules — strongly worded but not physically enforced.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Can I use Tasuki with multiple AI tools on the same project?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>

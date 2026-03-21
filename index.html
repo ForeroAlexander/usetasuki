@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tasuki (&#35167;) — Memory, discipline, and a process your AI can't skip</title>
+<title>Tasuki (&#35167;) — Real multi-agent orchestration. Not just prompt-switching.</title>
 <meta name="description" content="Tasuki gives your AI coding assistant memory that persists, hooks that enforce discipline, and a pipeline it can't ignore. The sash that keeps sleeves tied back before working.">
 <link rel="icon" type="image/svg+xml" href="assets/tasuki-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,11 +63,11 @@
   </div>
 
   <h1 class="hero-title">
-    Memory, discipline, and a process<br>your AI can't skip.
+    Real multi-agent orchestration.<br>Not just prompt-switching.
   </h1>
 
   <p class="hero-sub">
-    I was tired of babysitting my AI. So I built Tasuki (&#35167;) — the sash used in Japan to tie back sleeves before working. It gives your AI coding assistant memory that persists, 7 hooks that enforce discipline, and a sequential pipeline it can't ignore. Say "tasuki" in your prompt and the pipeline activates.
+    In Claude Code, each agent is a real teammate — its own context window, its own model — via Agent Teams. In other AI tools, Tasuki provides structured role-switching that still enforces discipline. 9 hooks, 2-layer memory, a sequential pipeline. Tasuki (&#35167;) — the sash used in Japan to tie back sleeves before working. Say "tasuki" and the pipeline activates.
   </p>
 
   <div class="hero-actions">
@@ -75,14 +75,24 @@
     <a href="pipeline.html" class="btn btn-ghost btn-hero">See the pipeline</a>
   </div>
 
-  <div class="hero-install" onclick="copyCmd(this)">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
-    npm install -g tasuki
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">npm</div>
+    <div class="hero-install" onclick="copyCmd(this)">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
+      npm install -g tasuki
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </div>
+    <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:8px;">homebrew</div>
+    <div class="hero-install" onclick="copyCmd(this)">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
+      brew tap ForeroAlexander/tasuki && brew install tasuki
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </div>
   </div>
 
   <div class="hero-proof" style="margin-top:16px;">
-    <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>7 mechanical hooks</span>
+    <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>9 mechanical hooks</span>
+    <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>Agent Teams</span>
     <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>2-layer memory</span>
     <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>MIT License</span>
     <span><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="var(--reviewer)" stroke-width="1.1"/><path d="M4 6.5L6 8.5L9.5 5" stroke="var(--reviewer)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>$0 to onboard</span>
@@ -97,7 +107,7 @@
     <div class="terminal-body">
       <span class="t-line"><span class="t-p">$</span> <span class="t-cmd">tasuki onboard .</span></span>
       <span class="t-line t-dim">  ✓ FastAPI + PostgreSQL + React detected</span>
-      <span class="t-line t-dim">  ✓ 9 agents configured · 7 hooks installed</span>
+      <span class="t-line t-dim">  ✓ 9 agents configured · 9 hooks installed · Agent Teams enabled</span>
       <span class="t-line t-ok">  Ready. Talk to Claude Code normally.</span>
       <span class="t-line">&nbsp;</span>
       <span class="t-line"><span class="t-p">You:</span> <span class="t-cmd">tasuki Add user authentication with JWT</span></span>
@@ -117,11 +127,24 @@
 
 <hr class="div">
 
+<!-- VIDEO DEMO -->
+<section class="section" id="demo">
+  <div class="container">
+    <p class="eyebrow">See it in action</p>
+    <h2>From onboard to feature — in one prompt.</h2>
+    <div class="terminal-wrap" style="max-width:900px;margin:2.4rem auto 0;">
+      <video controls muted style="width:100%;border-radius:12px;display:block;" src="assets/tasuki-demo.mp4"></video>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
 <!-- TEAM -->
 <div class="sect" id="team">
   <div class="eyebrow">Process — 9 specialist agents</div>
-  <h2 class="section-title">A pipeline your AI<br>can't skip.</h2>
-  <p class="section-sub">9 specialist agents in a sequential pipeline with structured handoffs. Say "tasuki" and the pipeline activates — planner first, tests before code, security audit, code review. No shortcuts. <a href="pipeline.html" style="color:var(--text2);text-underline-offset:3px;">See the full pipeline →</a></p>
+  <h2 class="section-title">Real teammates,<br>not prompt personas.</h2>
+  <p class="section-sub">In Claude Code, each agent runs as an Agent Team member — a real subprocess with its own context window and model. In other tools, Tasuki provides guided role-switching with structured handoffs. Either way: planner first, tests before code, security audit, code review. No shortcuts. <a href="pipeline.html" style="color:var(--text2);text-underline-offset:3px;">See the full pipeline →</a></p>
 
   <div class="agents-grid">
 
@@ -484,14 +507,14 @@
 <div class="sect" id="how">
   <div class="eyebrow">How it works</div>
   <h2 class="section-title">Sequential by design,<br>not by accident.</h2>
-  <p class="section-sub">Say "tasuki" in your prompt and the pipeline-trigger hook activates the full process. 7 hooks enforce discipline mechanically — no advisory rules, no hoping the AI behaves. Every stage has a reason to go exactly where it does. <a href="pipeline.html" style="color:var(--text2);text-underline-offset:3px;">Deep dive →</a></p>
+  <p class="section-sub">Say "tasuki" in your prompt and the pipeline-trigger hook activates the full process. 9 hooks enforce discipline mechanically — no advisory rules, no hoping the AI behaves. In Claude Code, this is real orchestration via Agent Teams. Every stage has a reason to go exactly where it does. <a href="pipeline.html" style="color:var(--text2);text-underline-offset:3px;">Deep dive →</a></p>
 
   <div class="pipeline-visual">
     <div class="pipeline-stage">
       <div class="pipeline-spine"><div class="pipeline-num">1</div><div class="pipeline-line"></div></div>
       <div class="pipeline-content">
         <div class="pipeline-header"><div class="pipeline-label">Planner</div><div class="pipeline-tag tag-confirm">Confirms with you</div></div>
-        <div class="pipeline-desc">Reads your project context, designs architecture, saves the PRD to <code>tasuki-plans/</code>. Decomposes into one task per agent via Taskmaster. Shows you the summary and waits before any code is written.</div>
+        <div class="pipeline-desc">Reads your project context, designs architecture, saves the PRD to <code>tasuki-plans/</code>. Decomposes into per-agent tasks via shared task list. Shows you the summary and waits before any code is written.</div>
       </div>
     </div>
     <div class="pipeline-stage">
@@ -563,10 +586,12 @@
         <div class="comp-badge badge-full">Full pipeline</div>
       </div>
       <div>
-        <div class="comp-row"><div class="comp-feat">Pipeline execution</div><div class="comp-val val-yes">Automatic (Agent() sub-agents)</div></div>
+        <div class="comp-row"><div class="comp-feat">Pipeline execution</div><div class="comp-val val-yes">Agent Teams — real teammates with separate context windows</div></div>
         <div class="comp-row"><div class="comp-feat">TDD hook</div><div class="comp-val val-yes">Mechanical block (exit 2)</div></div>
         <div class="comp-row"><div class="comp-feat">Security hook</div><div class="comp-val val-yes">Mechanical block</div></div>
-        <div class="comp-row"><div class="comp-feat">Agent isolation</div><div class="comp-val val-yes">Separate context per agent</div></div>
+        <div class="comp-row"><div class="comp-feat">Agent isolation</div><div class="comp-val val-yes">Real — each agent is a subprocess with its own context</div></div>
+        <div class="comp-row"><div class="comp-feat">Model per agent</div><div class="comp-val val-yes">Yes — Opus for thinking, Sonnet for execution</div></div>
+        <div class="comp-row"><div class="comp-feat">Inter-agent messaging</div><div class="comp-val val-yes">Native (TeammateIdle, TaskCompleted hooks)</div></div>
         <div class="comp-row"><div class="comp-feat">Memory vault</div><div class="comp-val val-yes">Full knowledge graph</div></div>
       </div>
     </div>
@@ -646,6 +671,47 @@
 
 <hr class="div">
 
+<!-- MEMORY COMPARISON -->
+<div class="sect" id="memory-compare">
+  <div class="eyebrow">Memory comparison</div>
+  <h2 class="section-title">Claude remembers.<br>Tasuki's agents learn.</h2>
+
+  <div class="comparison-grid">
+    <div class="comp-card">
+      <div class="comp-head">
+        <div class="comp-tool">Claude Memory</div>
+        <div class="comp-badge badge-compat">claude.ai</div>
+      </div>
+      <div>
+        <div class="comp-row"><div class="comp-feat">Scope</div><div class="comp-val val-mid">General — one pool for everything</div></div>
+        <div class="comp-row"><div class="comp-feat">Learning</div><div class="comp-val val-mid">Manual — you tell it or it decides</div></div>
+        <div class="comp-row"><div class="comp-feat">Loading</div><div class="comp-val val-no">All memories loaded every time</div></div>
+        <div class="comp-row"><div class="comp-feat">Confidence</div><div class="comp-val val-no">None — no decay, no scoring</div></div>
+        <div class="comp-row"><div class="comp-feat">Connections</div><div class="comp-val val-no">Isolated entries, no relations</div></div>
+        <div class="comp-row"><div class="comp-feat">Visibility</div><div class="comp-val val-no">Hidden — you can't easily browse or edit</div></div>
+      </div>
+    </div>
+    <div class="comp-card feat">
+      <div class="comp-head feat-head">
+        <div class="comp-tool">Tasuki Memory Vault</div>
+        <div class="comp-badge badge-full">Per-agent memory</div>
+      </div>
+      <div>
+        <div class="comp-row"><div class="comp-feat">Scope</div><div class="comp-val val-yes">Per-agent — each specialist has its own memories</div></div>
+        <div class="comp-row"><div class="comp-feat">Learning</div><div class="comp-val val-yes">Automatic — agents write what they learned after every task</div></div>
+        <div class="comp-row"><div class="comp-feat">Loading</div><div class="comp-val val-yes">Filtered — [[wikilinks]] load only relevant entries (~72 tokens)</div></div>
+        <div class="comp-row"><div class="comp-feat">Confidence</div><div class="comp-val val-yes">Scored — high/experimental/deprecated + auto-decay + applied-count</div></div>
+        <div class="comp-row"><div class="comp-feat">Connections</div><div class="comp-val val-yes">Knowledge graph — BFS traversal across related nodes</div></div>
+        <div class="comp-row"><div class="comp-feat">Visibility</div><div class="comp-val val-yes">Open — tasuki dashboard or any editor (plain markdown, git-versioned)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <p style="max-width:700px;margin:32px auto 0;text-align:center;font-size:14px;color:var(--text3);line-height:1.7;">Claude Memory is great for personal preferences.<br>Tasuki Memory Vault is for agents that get smarter about <strong style="color:var(--text2);">your project</strong> with every task.</p>
+</div>
+
+<hr class="div">
+
 <!-- PRICING -->
 <div class="sect" id="pricing">
   <div class="eyebrow">Cost</div>
@@ -716,11 +782,11 @@
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">What does "onboard" actually do?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
-      <div class="faq-a">Runs 5 bash detectors against your actual files — no API calls, zero tokens, $0. Detects stack from real imports, versions from package files, paths from directory structure. Generates .tasuki/ with 9 configured agents, 7 hooks, verified project facts, and an initialized knowledge graph. Takes about 10 seconds.</div>
+      <div class="faq-a">Runs 5 bash detectors against your actual files — no API calls, zero tokens, $0. Detects stack from real imports, versions from package files, paths from directory structure. Generates .tasuki/ with 9 configured agents, 9 hooks, verified project facts, and an initialized knowledge graph. Takes about 10 seconds.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Is the pipeline fully automatic with Claude Code?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
-      <div class="faq-a">Yes, for Claude Code. Stages 1–9 run automatically via Agent() sub-agent calls. It stops twice for your input: after the Planner shows you the plan and before Frontend starts building. Everything else is automatic. On Cursor and other tools, the pipeline is structured role-switching — the AI follows instructions in order, but you guide transitions between stages.</div>
+      <div class="faq-a">Yes, for Claude Code. Stages 1–9 run automatically via Agent Teams — each agent runs as a real teammate with its own context window. Tasuki activates Agent Teams automatically during onboard. It stops twice for your input: after the Planner shows you the plan and before Frontend starts building. Everything else is automatic. On Cursor and other tools, the pipeline is structured role-switching — the AI follows instructions in order, but you guide transitions between stages.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">What if my project doesn't have tests yet?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
@@ -734,6 +800,14 @@
       <button class="faq-q" onclick="toggleFaq(this)">What stacks does it support?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
       <div class="faq-a">13 profiles auto-detected: FastAPI, Django, Flask, Next.js, SvelteKit, Nuxt, Express, NestJS, Rails, Gin, Spring Boot, Laravel, and Generic fallback. If your stack isn't listed, Generic still configures all 9 agents — it just won't have stack-specific migration patterns.</div>
     </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What is Agent Teams?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Agent Teams is Claude Code's experimental feature for real multi-agent orchestration. Each agent runs as a subprocess with its own context window and model, not just a prompt persona. Tasuki activates it automatically during onboard. To opt out, set <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=0</code>.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I install with Homebrew?<svg class="faq-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
+      <div class="faq-a">Yes. Run <code>brew tap ForeroAlexander/tasuki && brew install tasuki</code>. Works on macOS and Linux.</div>
+    </div>
   </div>
 </div>
 
@@ -741,13 +815,20 @@
 
 <!-- CTA -->
 <div class="cta-section" id="install">
-  <h2 class="cta-title">Memory. Discipline.<br>A process your AI<br>can't skip.</h2>
+  <h2 class="cta-title">Real orchestration. Persistent memory.<br>A process your AI<br>can't skip.</h2>
   <p class="cta-sub">Free, open source, runs locally. No account needed.</p>
 
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">npm</div>
     <div class="cta-install" onclick="copyCmd(this)">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
       npm install -g tasuki
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </div>
+    <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:8px;">homebrew</div>
+    <div class="cta-install" onclick="copyCmd(this)">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="12" height="12" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M3 4.5h7M3 6.5h7M3 8.5h5" stroke="rgba(255,255,255,0.3)" stroke-width="0.9" stroke-linecap="round"/></svg>
+      brew tap ForeroAlexander/tasuki && brew install tasuki
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="color:var(--text3)"><rect x="0.5" y="2.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3.5 0.5h8a1 1 0 0 1 1 1v8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
     </div>
     <div class="cta-hint" id="copy-hint">click to copy</div>
